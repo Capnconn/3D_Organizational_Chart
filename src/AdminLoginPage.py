@@ -7,6 +7,7 @@ import sys, os
 os.chdir("..")
 cur_path = os.getcwd()
 
+# Enables the interfaces to function on higher resolution monitors
 QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
