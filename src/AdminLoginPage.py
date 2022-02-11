@@ -1,7 +1,11 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit
-import sys
+import sys, os
+
+# Go back to the previous directory - to access the ui folder
+os.chdir("..")
+cur_path = os.getcwd()
 
 QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
@@ -10,7 +14,7 @@ class UI(QMainWindow):
 	def __init__(self):
 		super(UI, self).__init__()
 
-		uic.loadUi("AdminLoginPage.ui", self)
+		uic.loadUi(cur_path + "/ui/AdminLoginPage.ui", self)
 
 		# Define our widgets
 		self.usernameEdit = self.findChild(QLineEdit, "UsernameValue")
