@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QCheckBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QCheckBox, QSizePolicy
 import sys, os
 
 # Go back to the previous directory - to access the ui folder
@@ -16,6 +16,10 @@ class UI(QMainWindow):
 		super(UI, self).__init__()
 
 		uic.loadUi(cur_path + "/ui/AdminLoginPage.ui", self)
+
+		# Enforce a particular window size, to prevent from empty space
+		self.setFixedWidth(600)
+		self.setFixedHeight(500)
 
 		# Define our widgets
 		self.usernameEdit = self.findChild(QLineEdit, "UsernameValue")
@@ -82,8 +86,8 @@ class UI(QMainWindow):
 
 
 
-# Initialize the App
-app = QApplication(sys.argv)
-UIWindow = UI()
-
-app.exec_()
+if __name__ == "__main__":
+	# Initialize the App
+	app = QApplication(sys.argv)
+	UIWindow = UI()
+	app.exec_()
