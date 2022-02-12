@@ -62,14 +62,17 @@ class UI(QMainWindow):
 		# Check if username and password field are filled out
 		if self.usernameEdit.text().strip() == '' and self.passwordEdit.text().strip() == '':
 			self.fieldMissing.setText("* Username and password field's are required.")
+			self.incorrectField.setHidden(True)
 			self.fieldMissing.setHidden(False)
 			return
 		elif self.usernameEdit.text().strip() == '':
-			self.fieldMissing.setText("* Username field is required.")	
+			self.fieldMissing.setText("* Username field is required.")
+			self.incorrectField.setHidden(True)	
 			self.fieldMissing.setHidden(False)
 			return
 		elif self.passwordEdit.text().strip() == '':
 			self.fieldMissing.setText("* Password field is required.")
+			self.incorrectField.setHidden(True)
 			self.fieldMissing.setHidden(False)
 			return
 		self.fieldMissing.setHidden(True)
