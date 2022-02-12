@@ -175,6 +175,67 @@ background-color: transparent;</string>
      <string>Admin Login Page</string>
     </property>
    </widget>
+   <widget class="QLabel" name="FieldMissing">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>175</y>
+      <width>300</width>
+      <height>14</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: transparent;
+color: #CC3333;</string>
+    </property>
+    <property name="text">
+     <string>* Username and password field's are required</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="IncorrectField">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>340</y>
+      <width>300</width>
+      <height>14</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: transparent;
+color: #CC3333;</string>
+    </property>
+    <property name="text">
+     <string>* Username or password incorrect.</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="ShowPassword">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>294</y>
+      <width>100</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: transparent;
+color: black;</string>
+    </property>
+    <property name="text">
+     <string>Show Password</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
