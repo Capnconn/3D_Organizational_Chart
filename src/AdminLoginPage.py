@@ -11,9 +11,9 @@ cur_path = os.getcwd()
 QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
-class UI(QMainWindow):
+class AdminLoginPage(QMainWindow):
 	def __init__(self):
-		super(UI, self).__init__()
+		super(AdminLoginPage, self).__init__()
 
 		uic.loadUi(cur_path + "/ui/AdminLoginPage.ui", self)
 
@@ -92,5 +92,5 @@ class UI(QMainWindow):
 if __name__ == "__main__":
 	# Initialize the App
 	app = QApplication(sys.argv)
-	UIWindow = UI()
+	adminLoginWindow = AdminLoginPage()
 	app.exec_()
