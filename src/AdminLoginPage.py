@@ -1,11 +1,16 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QCheckBox, QSizePolicy
-import sys, os
 
-# Go back to the previous directory - to access the ui folder
+import sys, os
 os.chdir("..")
 cur_path = os.getcwd()
+
+from AdminMainPage import AdminMainPage
+
+# Go back to the previous directory - to access the ui folder
+
+
 
 # Enables the interfaces to function on higher resolution monitors
 QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -48,7 +53,15 @@ class AdminLoginPage(QMainWindow):
 		# Handle submit click
 		self.loginButton.clicked.connect(self.handleSubmit)
 
+		# Handle guest login
+		self.viewButton.clicked.connect(self.openMainWindow)
+
 		self.show()
+
+	def openMainWindow(self):
+		self.window = QtWidgets.QMainWindow()
+		self.ui = AdminMainPage()
+		self.close()
 
 	# Hide/unhide password based on whether or note checkbox is checked
 	def unhidePassword(self):
@@ -58,7 +71,6 @@ class AdminLoginPage(QMainWindow):
 			self.passwordEdit.setEchoMode(QLineEdit.Normal)
 
 	def handleSubmit(self):
-
 		# Check if username and password field are filled out
 		if self.usernameEdit.text().strip() == '' and self.passwordEdit.text().strip() == '':
 			self.fieldMissing.setText("* Username and password field's are required.")
@@ -81,13 +93,13 @@ class AdminLoginPage(QMainWindow):
 		if not self.usernameEdit.text().strip() == 'Connor' and not self.passwordEdit.text().strip() == 'password':
 			self.incorrectField.setHidden(False)
 			return
+		else:
+			self.openMainWindow()
 
 		self.incorrectField.setHidden(True)
 
 		print("Username: " + self.usernameEdit.text())
 		print("Password: " + self.passwordEdit.text())
-
-
 
 if __name__ == "__main__":
 	# Initialize the App
