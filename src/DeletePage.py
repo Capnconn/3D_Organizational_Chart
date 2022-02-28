@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QCheckBox, QSizePolicy, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QCheckBox, QSizePolicy, QMessageBox, QComboBox
 import sys, os
 
 # Go back to the previous directory - to access the ui folder
@@ -28,6 +28,8 @@ class DeletePage(QMainWindow):
 		self.comboBox.currentTextChanged.connect(self.onComboBoxChanged)
 		self.deleteButton.clicked.connect(self.displayInfoMsg)
 		
+		self.show()
+		
 	#Stores selected option into variable to be displayed in delete message
 	def onComboBoxChanged (text):
 		deletedConnection = text
@@ -37,8 +39,9 @@ class DeletePage(QMainWindow):
 	def displayInfoMsg(self):
 		#deletedConnection = onComboBoxChanged()
 		msg = QMessageBox()
-		msg.setIcon = (QMessageBox.Information)
+		msg.setIcon(QMessageBox.Information)
 		msg.setText('The connection has been deleted.')
+		msg.exec_()
 	
 		
 	
