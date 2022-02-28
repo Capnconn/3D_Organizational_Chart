@@ -10,6 +10,7 @@ cur_path = os.getcwd()
 
 from DeleteBranch import DeleteBranchPage
 
+
 QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
