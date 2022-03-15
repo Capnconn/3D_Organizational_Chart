@@ -1,0 +1,56 @@
+body {
+	background-color: #00bdff;
+}
+
+.AdminLoginBody {
+	display: block;
+	text-align: center;
+}
+
+.UsernameCredential, .PasswordCredential {
+	padding-top: 30px;
+	display: block;
+	text-align: center;
+	margin: 10px;
+}
+
+.paragraphCredential {
+	margin:  5px;
+	margin-right: 42.5%;
+	font-size: 13px;
+}
+
+.LoginButton {
+	border-radius: 12px;
+	border: 1px solid grey;
+	padding: 8px 40px;
+	font-size: 14px;
+	margin:  30px 2px;
+	cursor: pointer;
+}
+
+.ViewGuest {
+	display: block;
+	text-align: center;
+	margin: 78px;
+}
+
+.ViewParagraph {
+	margin:  -15px;
+	font-size: 25px;
+}
+
+.LoginButton:active {
+	position: relative;
+	top: 1px;
+}
+
+.UsernameHyperLink {
+	font-size: 13px;
+	margin-right: 5%;
+}
+
+.PasswordHyperLink {
+	font-size: 13px;
+	margin-left: 5%;
+}

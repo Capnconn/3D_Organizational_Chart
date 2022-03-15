@@ -2,10 +2,9 @@ from dash import Dash, html, dcc
 import plotly.express as px
 import pandas as pd
 from dash.dependencies import Input, State, Output
+from pages import AddNewBranch
 
-AdminLoginPage = Dash(__name__)
-
-AdminLoginPage.layout = html.Div(children=[
+layout = html.Div(children=[
 
 	html.Div(className="AdminLoginBody", 
 		children=
@@ -32,24 +31,17 @@ AdminLoginPage.layout = html.Div(children=[
 			html.Button('View', id='view', className="LoginButton")
 			]
 		)
-		]
-	),
-	html.Div(id='hidden-div', 
-		children=[])
+	])
 ])
-
-# Change this to handle onClick
-@AdminLoginPage.callback(
-	Output('hidden-div', 'children'),
-	Input('username', 'value'),
-	Input('password', 'value'),
-	Input('submit-val', 'n_clicks')
-)
-def handleSubmit(username, password, n_clicks):
-	# if n_clicks > 1:
-	# 	print('username: ' + n_clicks + ' password: ' + password)
-	# else:
-	print('dsfasfd')
-
-if __name__ == '__main__':
-	AdminLoginPage.run_server(debug=True)
+# # Change this to handle onClick
+# @AdminLoginPage.callback(
+# 	Output('hidden-div', 'children'),
+# 	Input('username', 'value'),
+# 	Input('password', 'value'),
+# 	Input('submit-val', 'n_clicks')
+# )
+# def handleSubmit(username, password, n_clicks):
+# 	# if n_clicks > 1:
+# 	# 	print('username: ' + n_clicks + ' password: ' + password)
+# 	# else:
+# 	print('dsfasfd')
