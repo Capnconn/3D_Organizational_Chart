@@ -1,45 +1,55 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit
-import sys, os
+from dash import Dash, html, dcc
+import plotly.express as px
+import pandas as pd
+from dash.dependencies import Input, State, Output
 
-# Go back to the previous directory - to access the ui folder
-os.chdir("..")
-cur_path = os.getcwd()
+AdminLoginPage = Dash(__name__)
 
-QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+AdminLoginPage.layout = html.Div(children=[
 
-class UI(QMainWindow):
-	def __init__(self):
-		super(UI, self).__init__()
+	html.Div(className="AdminLoginBody", 
+		children=
+		[
+		html.H1('Admin Login'),
+		html.Div(className="UsernameCredential", 
+			children=[
+			html.P('Username', className='paragraphCredential'),
+			dcc.Input(id='username', type='text', placeholder='', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}),
+			]
+		),
+		html.Div(className="PasswordCredential", 
+			children=[
+			html.P('Password', className='paragraphCredential'),
+			dcc.Input(id='password', type='text', placeholder='', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'})
+			]
+		),		
+		dcc.Link('Forgot username', href='', className="UsernameHyperLink"),
+		html.Button('Login', id='submit-val', n_clicks=0, className="LoginButton"),
+		dcc.Link('Forgot password', href='', className="PasswordHyperLink"),
+		html.Div(className='ViewGuest', 
+			children=[
+			html.P('View as a guest', className='ViewParagraph'),
+			html.Button('View', id='view', className="LoginButton")
+			]
+		)
+		]
+	),
+	html.Div(id='hidden-div', 
+		children=[])
+])
 
-		uic.loadUi(cur_path + "/ui/AdminLoginPage.ui", self)
+# Change this to handle onClick
+@AdminLoginPage.callback(
+	Output('hidden-div', 'children'),
+	Input('username', 'value'),
+	Input('password', 'value'),
+	Input('submit-val', 'n_clicks')
+)
+def handleSubmit(username, password, n_clicks):
+	# if n_clicks > 1:
+	# 	print('username: ' + n_clicks + ' password: ' + password)
+	# else:
+	print('dsfasfd')
 
-		# Define our widgets
-		self.usernameEdit = self.findChild(QLineEdit, "UsernameValue")
-		self.passwordEdit = self.findChild(QLineEdit, "PasswordValue")
-		self.loginButton = self.findChild(QPushButton, "LoginButton")
-		self.viewButton = self.findChild(QPushButton, "ViewButton")
-
-		# Set pointer when either buttons have been hovered over
-		self.loginButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-		self.viewButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-
-
-		# Handle submit click
-		self.loginButton.clicked.connect(self.handleSubmit)
-
-		self.show()
-
-	def handleSubmit(self):
-		print("Username: " + self.usernameEdit.text())
-		print("Password: " + self.passwordEdit.text())
-
-
-
-# Initialize the App
-app = QApplication(sys.argv)
-UIWindow = UI()
-
-app.exec_()
+if __name__ == '__main__':
+	AdminLoginPage.run_server(debug=True)
