@@ -2,12 +2,20 @@ body {
 	background-color: #00bdff;
 }
 
-.AdminLoginBody {
-	display: block;
+.AdminLoginBody, .AddNewBranchMain {
 	text-align: center;
 }
 
-.UsernameCredential, .PasswordCredential {
+.inputBox {
+	margin-top: 50px;
+	margin: -10px;
+	width: 50%;
+	border-radius: 7px;
+	border: 1px solid grey;
+	height: 20px;
+}
+
+.UsernameCredential, .PasswordCredential, .AddBranchBody {
 	padding-top: 30px;
 	display: block;
 	text-align: center;
@@ -16,11 +24,12 @@ body {
 
 .paragraphCredential {
 	margin:  5px;
-	margin-right: 42.5%;
+	margin-left: 25%;
 	font-size: 13px;
+	text-align: left;
 }
 
-.LoginButton {
+.LoginButton, .addBranchCss, .homeButtonCss {
 	border-radius: 12px;
 	border: 1px solid grey;
 	padding: 8px 40px;
@@ -40,7 +49,7 @@ body {
 	font-size: 25px;
 }
 
-.LoginButton:active {
+.LoginButton:active, .addBranchCss:active {
 	position: relative;
 	top: 1px;
 }
