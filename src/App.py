@@ -1,5 +1,5 @@
 from dash import Dash, dcc, html, Input, Output, callback
-from pages import AdminLoginPage, AddNewBranch, DeletePage
+from pages import AdminLoginPage, AddNewBranch, DeletePage, EditBranch
 App = Dash(__name__, suppress_callback_exceptions=True)
 
 App.layout = html.Div([
@@ -15,9 +15,11 @@ def display_page(pathname):
     if pathname == '/LoginPage':
         return AdminLoginPage.layout
     elif pathname == '/AddNewBranch':
-        return AddNewBranch.layout;
+        return AddNewBranch.layout
     elif pathname == '/DeletePage':
         return DeletePage.layout
+    elif pathname == '/EditPage' :
+        return EditBranch.layout
     else:
         return '404: page not found'
 
