@@ -2,7 +2,7 @@ body {
 	background-color: #00bdff;
 }
 
-.AdminLoginBody, .AddNewBranchMain {
+.AdminLoginBody, .AddNewBranchMain, .MainMenuTitle {
 	text-align: center;
 }
 
@@ -15,7 +15,7 @@ body {
 	height: 20px;
 }
 
-.UsernameCredential, .PasswordCredential, .AddBranchBody {
+.UsernameCredential, .PasswordCredential, .AddBranchBody, .MainMenuBody {
 	padding-top: 30px;
 	display: block;
 	text-align: center;
@@ -29,7 +29,48 @@ body {
 	text-align: left;
 }
 
-.LoginButton, .addBranchCss, .homeButtonCss {
+.filterMenuCss{
+	display: block;
+	background-color: #32CD32; /*limegreen*/
+	color: white;
+	border-radius: 12px;
+	border: 1px solid grey;
+	padding: 8px 10px;
+	font-size: 14px;
+	margin:  10px 2px;
+	cursor: pointer;
+	position: relative;
+	top: 400px;
+}
+
+.square{
+	height: 500px;
+	width: 500px;
+	background-color: white;
+	position: relative;
+	left: 150px;
+	bottom: 100px;
+}
+
+.addBranchMenuCss, .deleteBranchMenuCss, .editBranchMenuCss{
+	display: block;
+	background-color: #32CD32; /*limegreen*/
+	color: white;
+	border-radius: 12px;
+	border: 1px solid grey;
+	padding: 8px 10px;
+	font-size: 14px;
+	margin:  10px 2px;
+	cursor: pointer;
+}
+
+.addBranchMenuCss:active, .deleteBranchMenuCss:active, .editBranchMenuCss:active{
+	position: relative;
+	top: 1px;
+	
+}
+
+.LoginButton, .addBranchCss, .homeButtonCss, .deleteBranchCss {
 	border-radius: 12px;
 	border: 1px solid grey;
 	padding: 8px 40px;
@@ -49,7 +90,7 @@ body {
 	font-size: 25px;
 }
 
-.LoginButton:active, .addBranchCss:active {
+.LoginButton:active, .addBranchCss:active, .deleteBranchCss:active, .editBranchCss:active {
 	position: relative;
 	top: 1px;
 }
