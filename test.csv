@@ -1,2 +1,5 @@
-Community,Supply Chain Mgmt Product Mgmt,22,oversees software products of supply management dev
-Community,Supply Chain Mgmt Dev,17,builds software for supply chains
+Community,Supply Chain Management Product Management,22,oversees software products of supply chain management dev,"Supply Chain Management Development, Agile Office, Crop Science, Supply Chain Pipeline","Oversees software produced by Supply Chain Management Development, Receives training from Agile Office, Part of the Crop Science Division, Relays production status to Supply Chain Pipeline"
+Community,Supply Chain Management Development,17,builds software for supply chains,"Supply Chain Pipeline, Supply Chain Management Product Management","Provides Supply Chain Pipeline with software, Oversees software produced by Supply Chain Management Development"
+Department,Agile Office,9,trains other IT areas on good software dev practices,Supply Chain Management Development,Receives training from Agile Office
+Division,Crop Science,189,oversees agricultural products at Bayer,Supply Chain Management Product Management,Part of the Crop Science Division
+Department,Supply Chain Pipeline,71,Logistical entity that delivers agricultural products to Bayer,"Supply Chain Management Product Management, Supply Chain Management Development","Relays product status to Supply Chain Pipeline, Provides Supply Chain Pipeline with software"

@@ -25,15 +25,15 @@ cursor.execute(
     description VARCHAR(255))"""
 )
 
-# insert_level_into_org_levels = "INSERT INTO org_levels (level, description) VALUES (%s, %s)"
-# vals = [
-   # ("Division", "Highest level of Bayer's business model; contains Crop Science, Pharmaceuticals, and Consumer Health industries"),
-   # ("Department", "Secondary level; focused interest areas w/in each division"),
-   # ("Platform", "Tertiary level that contributes functionality to departments"),
-   # ("Community", "Quarternary level that handles individual roles that make up platform tasks")
-# ]
+insert_level_into_org_levels = "INSERT INTO org_levels (level, description) VALUES (%s, %s)"
+vals = [
+   ("Division", "Highest level of Bayer's business model; contains Crop Science, Pharmaceuticals, and Consumer Health industries"),
+   ("Department", "Secondary level; focused interest areas w/in each division"),
+   ("Platform", "Tertiary level that contributes functionality to departments"),
+   ("Community", "Quarternary level that handles individual roles that make up platform tasks")
+]
 
-# cursor.executemany(insert_level_into_org_levels, vals)
+cursor.executemany(insert_level_into_org_levels, vals)
 
 
 cursor.execute(
