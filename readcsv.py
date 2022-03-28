@@ -61,9 +61,9 @@ class read_csv:
 			# cursor.execute(
 				# """INSERT INTO org_chart_branches 
 				# (branch_level, branch_title, num_of_employees, branch_description) 
-				# VALUES(%s, %s, %s, %s)""", (self.level[x], self.title[x], self.num_employees[x], self.description[x]))
+				# VALUES(%s, %s, %s, %s)""", (self.level[x].strip(), self.title[x].strip(), self.num_employees[x].strip(), self.description[x].strip()))
 				
-			# bayerdb.commit() #required to update database through python
+			# bayerdb.commit() #required to update database through python.
 		
 		cursor.execute("SELECT * FROM org_chart_branches")
 		
