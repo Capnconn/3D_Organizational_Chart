@@ -37,7 +37,11 @@ layout = html.Div(className='EditBranchMain',
 	prevent_initial_call=True
 )
 def handleEdit(n_clicks, branchName, info1, info2, info3):
-	return html.P(("For branch: " + branchName + " - change: " + info1 + ", " + info2 + ", " + info3), id="tempPEdit")
+	if not branchName or not info1 or not info2 or not info3:
+		return html.P(("Empty Fields"), id="tempPEdit")
+
+	else:
+		return html.P(("For branch: " + branchName + " - change: " + info1 + ", " + info2 + ", " + info3), id="tempPEdit")
 
 
 @callback(
