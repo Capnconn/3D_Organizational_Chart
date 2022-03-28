@@ -8,7 +8,7 @@ from dash import Dash, dcc, html, Input, Output, callback, State
 
 layout = html.Div(className='DeletePageLayout',
     children=[
-        html.H1("Delete a Link or Node"),
+        html.H1("Delete a Link or Node", className="deleteNodeLabel"),
         html.Div(className="deleteLinkBody",
             children=[
                 html.P("Link: ", id="currentLink", className="linkLabel"),
@@ -28,7 +28,7 @@ layout = html.Div(className='DeletePageLayout',
             
         ),
         
-        html.Button('Home', id='goHomeButton', className='goHome', style={'position': 'relative', 'top': '180px'}),
+        html.Button('Home', id='goHomeButton', className='goHome'),
         html.Div(id="hidden_div_for_redirect_callback_delete_link"),
         html.Div(id="hidden_div_for_redirect_callback-delete_node"),
         html.Div(id="hidden_div_for_redirect_callback_return_home")

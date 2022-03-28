@@ -2,7 +2,7 @@ body {
 	background-color: #00bdff;
 }
 
-.AdminLoginBody, .AddNewBranchMain, .MainMenuTitle {
+.AdminLoginBody, .AddNewBranchMain, .MainMenuTitle, .DeletePageLayout {
 	text-align: center;
 }
 
@@ -22,7 +22,7 @@ body {
 	margin: 10px;
 }
 
-.paragraphCredential {
+.paragraphCredential, .linkLabel, .nodeLabel {
 	margin:  5px;
 	margin-left: 25%;
 	font-size: 13px;
@@ -43,12 +43,16 @@ body {
 	top: 400px;
 }
 
+.MainMenuTitle{
+	margin: auto;
+}
+
 .square{
+	margin: auto;
 	height: 500px;
 	width: 500px;
 	background-color: white;
 	position: relative;
-	left: 150px;
 	bottom: 100px;
 }
 
@@ -70,7 +74,9 @@ body {
 	
 }
 
-.LoginButton, .addBranchCss, .homeButtonCss, .deleteBranchCss {
+.LoginButton, .addBranchCss, .homeButtonCss, .deleteBranchCss, .deleteALink, .deleteANode, .goHome {
+	background-color: #32CD32; /*limegreen*/
+	color: white;
 	border-radius: 12px;
 	border: 1px solid grey;
 	padding: 8px 40px;
@@ -90,7 +96,7 @@ body {
 	font-size: 25px;
 }
 
-.LoginButton:active, .addBranchCss:active, .deleteBranchCss:active, .editBranchCss:active {
+.LoginButton:active, .addBranchCss:active, .deleteBranchCss:active, .editBranchCss:active, .deleteALink:active {
 	position: relative;
 	top: 1px;
 }

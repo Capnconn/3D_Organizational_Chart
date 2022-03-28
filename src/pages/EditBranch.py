@@ -4,6 +4,7 @@ layout = html.Div(className='EditBranchMain',
 	children=[
       html.Div(className='AddBranchBody', 
 			children=[
+				html.H1('Edit a Branch'),
 				html.P('Select Branch:', id='branchNameP', className='paragraphCredential'),
 				dcc.Input(id='branchName', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}),
 				html.P('New info 1:', id='branchNameP', className='paragraphCredential'),

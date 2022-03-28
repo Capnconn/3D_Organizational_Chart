@@ -18,7 +18,7 @@ def display_page(pathname):
         return AddNewBranch.layout
     elif pathname == '/DeletePage':
         return DeletePage.layout
-    elif pathname == '/EditPage' :
+    elif pathname == '/EditBranch' :
         return EditBranch.layout
     elif pathname == '/MainMenu':
         return MainMenu.layout;
