@@ -17,7 +17,7 @@ layout = html.Div(className='MainMenu',
 		
 		html.Div(id='redirect_add_branch'),
 		html.Div(id='redirect_delete_branch'),
-		#html.Div(id='redirect_edit_branch'),
+		html.Div(id='redirect_edit_branch'),
 
 	]
 )
@@ -35,8 +35,15 @@ def handleAddBranch(n_clicks):
 	Input('deleteBranchButton', 'n_clicks'),
 	prevent_initial_call=True
 )
-
 def handleDeleteBranch(n_clicks):
 	return dcc.Location(pathname='/DeleteBranch', id='tempL')
+
+@callback(
+	Output('redirect_edit_branch', 'children'),
+	Input('editBranchButton', 'n_clicks'),
+	prevent_initial_call=True
+)
+def handleEditPage(n_clicks):
+	return dcc.Location(pathname='/EditBranch', id='tempL')
 
 

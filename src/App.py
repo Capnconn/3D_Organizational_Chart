@@ -16,7 +16,7 @@ def display_page(pathname):
         return AdminLoginPage.layout
     elif pathname == '/AddNewBranch':
         return AddNewBranch.layout
-    elif pathname == '/DeletePage':
+    elif pathname == '/DeleteBranch':
         return DeletePage.layout
     elif pathname == '/EditBranch' :
         return EditBranch.layout

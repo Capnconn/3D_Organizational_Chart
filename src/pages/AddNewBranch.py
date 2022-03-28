@@ -37,4 +37,4 @@ def handleAddBranch(n_clicks, branch):
 	prevent_initial_call=True
 )
 def handleHome(n_clicks):
-	return dcc.Location(pathname='/LoginPage', id='tempL')
+	return dcc.Location(pathname='/MainMenu', id='tempL')

@@ -69,4 +69,4 @@ def handleDeleteNode(n_clicks, node):
 	prevent_initial_call=True
 )
 def handleReturnHome(n_clicks):
-	return dcc.Location(pathname='/LoginPage', id='tempL')
+	return dcc.Location(pathname='/MainMenu', id='tempL')

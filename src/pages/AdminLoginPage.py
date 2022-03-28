@@ -45,7 +45,7 @@ layout = html.Div(className='AdminLoginBody',
 )
 def update_output_div(n_clicks, username, password):
     if username == 'connor' and password == 'password':
-    	return dcc.Location(pathname='/Aads', id='temp');
+    	return dcc.Location(pathname='/MainMenu', id='temp');
     else:
     	return html.P('*Username or Password is incorrect', id='temp_p', style={'color': '#cc0000', 'position': 'relative', 'bottom': '540px'})
 
@@ -55,4 +55,4 @@ def update_output_div(n_clicks, username, password):
 	prevent_initial_call=True
 )
 def handleGuest(n_clicks):
-	return dcc.Location(pathname='/AddNewBranch', id='temp')
+	return dcc.Location(pathname='/MainMenu', id='temp')
