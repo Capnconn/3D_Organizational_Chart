@@ -105,5 +105,5 @@ class read_csv:
 if __name__ == '__main__':
 
 	test = read_csv()
-	test.read_csv_file("test.csv")
+	test.read_csv_file("demo_data.csv")
 	test.write_csv_to_database()
