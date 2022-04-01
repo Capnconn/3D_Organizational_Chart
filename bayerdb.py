@@ -9,15 +9,39 @@
 #Lines 28-36 insert values into org_levels
 #Lines 58-61 confirm all three tables were created
 import mysql.connector
+from mysql.connector import errorcode
 
-bayerdb = mysql.connector.connect(
-	host="localhost",
-	user="root",
-	password="root",
-    database="bayerdatabase"
-	)
+try:
+    bayerdb = mysql.connector.connect(
+    	host="localhost",
+    	user="root",
+    	password="root",
+        database="bayerdatabase"
+    )
+    print("Database already created");
+    cursor = bayerdb.cursor()
+except mysql.connector.Error as err:
+    if err.errno == errorcode.ER_BAD_DB_ERROR:
+        print("Database does not yet exist, creating database with name: bayerdatabase.")
+        bayerdb = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="root",
+            )
+        cursor = bayerdb.cursor()
+        cursor.execute("CREATE DATABASE bayerdatabase")
+        bayerdb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="bayerdatabase"
+        )
+        print("Database successfully created.")
     
-cursor = bayerdb.cursor()
+
+
+
+
 
 cursor.execute(
 """CREATE TABLE IF NOT EXISTS org_levels
