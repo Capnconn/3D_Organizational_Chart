@@ -55,15 +55,15 @@ class read_csv:
 		database="bayerdatabase"
 		)
 		
-		cursor = bayerdb.cursor()
+		cursor = bayerdb.cursor(buffered=True)
 		
-		# for x in range(self.record_count):
-			# cursor.execute(
-				# """INSERT INTO org_chart_branches 
-				# (branch_level, branch_title, num_of_employees, branch_description) 
-				# VALUES(%s, %s, %s, %s)""", (self.level[x].strip(), self.title[x].strip(), self.num_employees[x].strip(), self.description[x].strip()))
+		for x in range(self.record_count):
+			cursor.execute(
+				"""INSERT INTO org_chart_branches 
+				(branch_level, branch_title, num_of_employees, branch_description) 
+				VALUES(%s, %s, %s, %s)""", (self.level[x], self.title[x], self.num_employees[x], self.description[x]))
 				
-			# bayerdb.commit() #required to update database through python.
+			bayerdb.commit() #required to update database through python.
 		
 		cursor.execute("SELECT * FROM org_chart_branches")
 		
@@ -97,9 +97,6 @@ class read_csv:
 				VALUES(%s, %s, %s)""", (source_id, target_id, dependent_branch_edge_description))
 				
 				bayerdb.commit()
-				
-				
-					
 
 #Driver for program
 if __name__ == '__main__':
