@@ -1,6 +1,8 @@
 from dash import Dash, dcc, html, Input, Output, callback
 from pages import AdminLoginPage, AddNewBranch, DeletePage, MainMenu, EditBranch
-App = Dash(__name__, suppress_callback_exceptions=True)
+import dash_bootstrap_components as dbc
+
+App = Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 App.layout = html.Div([
     dcc.Location(id='url', refresh=True),

@@ -1,26 +1,220 @@
 from dash import Dash, dcc, html, Input, Output, callback, State
+import dash_cytoscape as cyto
+import dash_daq as daq
+import dash_bootstrap_components as dbc
+import mysql.connector
+import json
+
+styles = {
+    'pre': {
+        'border': 'thin lightgrey solid',
+        'overflowX': 'scroll'
+    }
+}
+
+# Query the database for the top level of nodes
+bayerdb = mysql.connector.connect(
+	host="localhost",
+	user="root",
+	password="root",
+	database="bayerdatabase"
+)
+cursor = bayerdb.cursor(buffered=True);
+cursor.execute("""SELECT branch_id, branch_title FROM org_chart_branches WHERE branch_level='Division'""");
+division_tuple = cursor.fetchall()
+
+division_tuple = [(str(x[0]), str(x[1])) for x in division_tuple]
+# print(division_tuple)
+
+nodes = [
+	{
+		'data': {'id': short, 'label': label},
+		'position': {'x': 5 * int(short), 'y': -5 * int(short)}
+	}
+	for short, label in (
+		division_tuple
+	)
+]
+
+# print(nodes)
+source_id_list = []
+for x in division_tuple:
+	source_id_list.append(x[0])
+
+
+query = "SELECT source_id, target_id FROM edges WHERE source_id IN (" + ','.join(str(x) for x in source_id_list) + ")"
+cursor.execute(query)
+
+edge_id_list = cursor.fetchall()
+edge_id_list = [(str(x[0]), str(x[1])) for x in edge_id_list]
+
+# edges = [
+# 	{'data': {'source': source, 'target': target}}
+# 	for source, target in (
+# 		edge_id_list
+# 	)	
+# ]
+
+edges = []
+
+elements = nodes + edges
+print (elements)
 
 layout = html.Div(className='MainMenu', 
 	children=[
-		html.H1('Bayer 3D Chart', className='MainMenuTitle'),
-		html.Div(className='MainMenuButtons', 
-			children=[
-				html.P(id='spacing'),
-				html.Button('Add branch', id='addBranchButton', className='addBranchMenuCss'),
-				html.Button('Delete branch', id='deleteBranchButton', className='deleteBranchMenuCss'),
-				html.Button('Edit branch', id='editBranchButton', className='editBranchMenuCss'),
-				html.Button('Filter', id='filterButton', className='filterMenuCss'),
-				html.Div (className='square')
-			]
-			
-		),
-		
+			html.Div(className='MainMenuTitle', children=
+				[
+					html.H1('Bayer 3D Chart', className='mainMenuHeader'),
+				]
+			),
+			html.Div(className='mainMenuBody', children=
+				[
+					dbc.Button(
+						"Open collapse",
+						id='collapse-button',
+						className='collapseButtonCss',
+						color='primary',
+						n_clicks=0
+					),
+					dbc.Row(
+						[
+							dbc.Col(
+								dbc.Collapse(
+									dbc.Card(html.Button('Add branch', id='addBranchButton', className='addBranchMenuCss')),
+									id='addButton',
+									is_open=False
+								)
+							),
+							dbc.Col(
+								dbc.Collapse(
+									dbc.Card(html.Button('Delete branch', id='deleteBranchButton', className='deleteBranchMenuCss')),
+									id='deleteButton',
+									is_open=False
+								)
+							),
+							dbc.Col(
+								dbc.Collapse(
+									dbc.Card(html.Button('Edit branch', id='editBranchButton', className='editBranchMenuCss')),
+									id='editButton',
+									is_open=False
+								)
+							),
+						],
+						className="mt-3"
+					),
+					html.Button('Filter', id='filterButton', className='filterMenuCss'),
+				]
+			),
+			html.Div(className='mainMenuToggle', children=
+				[
+					daq.ToggleSwitch(
+						id='networkViewToggle',
+						className='networkToggleCss',
+						value=False,
+						label='Click to change network view',
+						color='green',
+						size=50
+					),
+					html.Div(id='my-toggle-switch-output')
+				]
+			),
+			html.Div(className='mainMenuNetwork', children=
+				[
+					cyto.Cytoscape(
+						id='cytoscape-callbacks-1',
+						elements=(nodes+edges),
+						style={'width': '100%', 'height': '400px'},
+						layout={
+						'name': 'circle'
+						}
+					),
+    				html.Div(id='cytoscape-tapNodeData-json')
+				]
+			),			
 		html.Div(id='redirect_add_branch'),
 		html.Div(id='redirect_delete_branch'),
 		html.Div(id='redirect_edit_branch'),
+		html.Div(id='new_Network')
 
 	]
 )
+
+
+
+@callback(
+	Output("addButton", "is_open"),
+	Output("deleteButton", "is_open"),
+	Output("editButton", "is_open"),
+	Input("collapse-button", "n_clicks"),
+	prevent_initial_call=True
+)
+def openCollapsibleMenu(n_clicks):
+	if n_clicks % 2 == 1:
+		return True, True, True 
+	else:
+		return False, False, False
+
+
+@callback(
+	Output('my-toggle-switch-output', 'children'),
+	Input('networkViewToggle', 'value'))
+def update_network_view(value):
+	if value:
+		return 'Current network view: {}'.format("Network Overview")
+	else:
+		return 'Current network view: {}'.format("Layered View")
+	
+
+
+@callback(
+	Output('cytoscape-callbacks-1', 'elements'),
+	Input('cytoscape-callbacks-1', 'tapNodeData'),
+	prevent_initial_call=True
+)
+def displayNodeData(data):
+	keys = list(data)
+	branch_name = ""
+	branch_id = ""
+	for x in keys:
+		if 'label' in x:
+			branch_name = data[x]
+		elif 'id' in x:
+			branch_id = data[x]
+	print(branch_id)
+	query = "SELECT branch_level FROM org_chart_branches WHERE branch_title=\'" + branch_name + "\'" ;
+	cursor.execute(query)
+
+	# Cursor returns a list of tuples - since we know that there will only be one level
+	# returned, we can index the first tuple of the list, and then index the first
+	# element of that tuple
+	level = (cursor.fetchall())[0][0]
+
+	query = "SELECT target_id FROM edges WHERE source_id=" + branch_id
+	cursor.execute(query)
+	list_of_ids = cursor.fetchall()
+	list_of_ids = [i[0] for i in list_of_ids]
+	query = "SELECT branch_id, branch_title FROM org_chart_branches WHERE branch_id IN (" + ','.join(str(x) for x in list_of_ids) + ")"
+	cursor.execute(query)
+	list_of_titles = cursor.fetchall()
+	list_of_titles = [(str(x[0]), str(x[1])) for x in list_of_titles]
+
+
+	nodes = [
+	{
+		'data': {'id': short, 'label': label},
+		'position': {'x': 5 * int(short), 'y': -5 * int(short)}
+	}
+		for short, label in (
+			list_of_titles
+		)
+	]
+	edges = []
+
+	return nodes + edges
+
+
+	
+
 
 @callback(
 	Output('redirect_add_branch', 'children'),
