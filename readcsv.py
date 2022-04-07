@@ -8,7 +8,7 @@ import mysql.connector
 import csv
 
 #read_csv has two functions: read_csv_file inputs fields from file into global lists. 
-#write_csv_to_database then reads in a record into the database by assigning the appropriate index of each list to their corollary fields in the database table
+#write_csv_to_database then reads in a record into the database by assigning the appropriate index of each list to their corollary fields in the database tables
 class read_csv:
 	
 	level = []
@@ -17,6 +17,8 @@ class read_csv:
 	description = []
 	edge_dependencies = []
 	edge_descriptions = []
+	parent = []
+	children = []
 	record_count = 0
 	
 	def read_csv_file(self, file_name):
@@ -32,9 +34,12 @@ class read_csv:
 			self.description.append(row[3])
 			edge_dependencies_string = row[4]
 			edge_descriptions_string = row[5]
+			self.parent.append(row[6])
+			children_string = row[7]
 			
 			self.edge_dependencies.append(edge_dependencies_string.split(", "))
 			self.edge_descriptions.append(edge_descriptions_string.split(", "))
+			self.children.append(children_string.split(", "))
 			
 			self.record_count += 1
 			
@@ -87,16 +92,78 @@ class read_csv:
 				
 				source_id = int(''.join(map(str, cursor.fetchone())))
 				
-				cursor.execute(select_branch_id, (dependent_branch_title,))
+				if(dependent_branch_title != "None"):
 				
-				target_id = int(''.join(map(str, cursor.fetchone())))
+					cursor.execute(select_branch_id, (dependent_branch_title,))
 				
+					target_id = int(''.join(map(str, cursor.fetchone())))
+				
+					cursor.execute(
+					"""INSERT INTO edges
+					(source_id, target_id, edge_description)
+					VALUES(%s, %s, %s)""", (source_id, target_id, dependent_branch_edge_description))
+				
+					bayerdb.commit()
+					
+				else:
+					print("There is no associated id for branch title " + dependent_branch_title)
+				
+				
+		for x in range(self.record_count):
+		
+			select_branch_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
+			
+			cursor.execute(select_branch_id, (self.title[x],))
+			
+			current_branch_id = int(''.join(map(str, cursor.fetchone())))
+			
+			if(self.parent[x] != "None"):
+			
+				cursor.execute(select_branch_id, (self.parent[x],))
+			
+				parent_branch_id = int(''.join(map(str, cursor.fetchone())))
+			
 				cursor.execute(
-				"""INSERT INTO edges
-				(source_id, target_id, edge_description)
-				VALUES(%s, %s, %s)""", (source_id, target_id, dependent_branch_edge_description))
-				
+				"""INSERT INTO parent_branches
+			(	current_branch_id, parent_branch_id)
+				VALUES(%s, %s)""", (current_branch_id, parent_branch_id))
+			
 				bayerdb.commit()
+			
+			else:
+				print(self.title[x] + " has no parent.")
+			
+		for x in range(self.record_count):
+			record_children = len(self.children[x])
+			for y in range(record_children):
+				child_branch_title = self.children[x][y]
+				
+				select_branch_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
+			
+				cursor.execute(select_branch_id, (self.title[x],))
+			
+				current_branch_id = int(''.join(map(str, cursor.fetchone())))
+				
+				#print(child_branch_title)
+				
+				if(child_branch_title != "None"):
+			
+					cursor.execute(select_branch_id, (child_branch_title,))
+			
+					child_branch_id = int(''.join(map(str, cursor.fetchone())))
+			
+					cursor.execute(
+					"""INSERT INTO child_branches
+					(current_branch_id, child_branch_id)
+					VALUES(%s, %s)""", (current_branch_id, child_branch_id))
+				
+					bayerdb.commit()
+					
+				else:
+				
+					print(self.title[x] + " has no children.")
+			
+		
 
 #Driver for program
 if __name__ == '__main__':

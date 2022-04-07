@@ -25,15 +25,15 @@ cursor.execute(
     description VARCHAR(255))"""
 )
 
-insert_level_into_org_levels = "INSERT INTO org_levels (level, description) VALUES (%s, %s)"
-vals = [
-   ("Division", "Highest level of Bayer's business model; contains Crop Science, Pharmaceuticals, and Consumer Health industries"),
-   ("Department", "Secondary level; focused interest areas w/in each division"),
-   ("Platform", "Tertiary level that contributes functionality to departments"),
-   ("Community", "Quarternary level that handles individual roles that make up platform tasks")
-]
+# insert_level_into_org_levels = "INSERT INTO org_levels (level, description) VALUES (%s, %s)"
+# vals = [
+   # ("Division", "Highest level of Bayer's business model; contains Crop Science, Pharmaceuticals, and Consumer Health industries"),
+   # ("Department", "Secondary level; focused interest areas w/in each division"),
+   # ("Platform", "Tertiary level that contributes functionality to departments"),
+   # ("Community", "Quarternary level that handles individual roles that make up platform tasks")
+# ]
 
-cursor.executemany(insert_level_into_org_levels, vals)
+# cursor.executemany(insert_level_into_org_levels, vals)
 
 
 cursor.execute(
@@ -53,6 +53,22 @@ cursor.execute(
     edge_description VARCHAR(255),
     FOREIGN KEY(source_id) REFERENCES org_chart_branches(branch_id),
     FOREIGN KEY(target_id) REFERENCES org_chart_branches(branch_id))"""
+)
+
+cursor.execute(
+"""CREATE TABLE IF NOT EXISTS parent_branches
+(current_branch_id INT,
+parent_branch_id INT,
+FOREIGN KEY(current_branch_id) REFERENCES org_chart_branches(branch_id),
+FOREIGN KEY(parent_branch_id) REFERENCES org_chart_branches(branch_id))"""
+)
+
+cursor.execute(
+"""CREATE TABLE IF NOT EXISTS child_branches
+(current_branch_id INT,
+child_branch_id INT,
+FOREIGN KEY(current_branch_id) REFERENCES org_chart_branches(branch_id),
+FOREIGN KEY(child_branch_id) REFERENCES org_chart_branches(branch_id))"""
 )
 
 cursor.execute("SHOW TABLES")
