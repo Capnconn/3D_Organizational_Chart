@@ -85,6 +85,16 @@ body {
 	cursor: pointer;
 }
 
+.previousBranchButtonCss {
+	background-color: #32CD32; /*limegreen*/
+	color: white;
+	border-radius: 12px;
+	border: 1px solid grey;
+	padding: 5px 12px;
+	font-size: 10px;
+	cursor: pointer;
+}
+
 .ViewGuest {
 	display: block;
 	text-align: center;
@@ -96,7 +106,7 @@ body {
 	font-size: 25px;
 }
 
-.LoginButton:active, .addBranchCss:active, .deleteBranchCss:active, .editBranchCss:active, .deleteALink:active {
+.LoginButton:active, .addBranchCss:active, .deleteBranchCss:active, .editBranchCss:active, .deleteALink:active, .previousBranchButtonCss:active {
 	position: relative;
 	top: 1px;
 }
@@ -118,14 +128,23 @@ body {
 }
 
 .mainMenuNetwork {
-	outline:  1px solid black;
+	border: 1px solid black;
+	margin-right: 15%;
+	margin-left: 15%;
 }
 
 .mainMenuToggle {
-	text-align: center;
-	margin-bottom: 20px;
+	position: absolute;
+	top: 0;
+	right: 0;
 }
 
 .networkToggleCss {
-	padding-bottom: 20px;
+	text-align: top;
+}
+
+.previousBranchDivCss {
+	margin-left: 15%;
+	padding-top: 0;
+	height: 50px;
 }

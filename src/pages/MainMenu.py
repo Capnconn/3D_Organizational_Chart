@@ -1,9 +1,12 @@
-from dash import Dash, dcc, html, Input, Output, callback, State
+from dash import Dash, dcc, html, Input, Output, callback, State, callback_context
 import dash_cytoscape as cyto
+import dash
 import dash_daq as daq
 import dash_bootstrap_components as dbc
 import mysql.connector
 import json
+
+previous_branch = []
 
 styles = {
     'pre': {
@@ -58,7 +61,6 @@ edge_id_list = [(str(x[0]), str(x[1])) for x in edge_id_list]
 edges = []
 
 elements = nodes + edges
-print (elements)
 
 layout = html.Div(className='MainMenu', 
 	children=[
@@ -118,28 +120,47 @@ layout = html.Div(className='MainMenu',
 					html.Div(id='my-toggle-switch-output')
 				]
 			),
+			html.Div(className='previousBranchDivCss', children=
+				[
+					html.P("Previous Branch: x", id='previous-branch', className='previousBranchCss', style={'display': 'none'}),
+					html.Button('Previous Branch', id='previousBranchButton', className='previousBranchButtonCss'),
+					html.Button('update', id='updateButton', className='previousBranchButtonCss')
+
+				]
+			),
 			html.Div(className='mainMenuNetwork', children=
 				[
 					cyto.Cytoscape(
+						autoungrabify=True,
+						userZoomingEnabled=False,
 						id='cytoscape-callbacks-1',
 						elements=(nodes+edges),
 						style={'width': '100%', 'height': '400px'},
 						layout={
 						'name': 'circle'
 						}
+
 					),
-    				html.Div(id='cytoscape-tapNodeData-json')
+    				html.Div(id='cytoscape-tapNodeData-json'),
 				]
 			),			
 		html.Div(id='redirect_add_branch'),
 		html.Div(id='redirect_delete_branch'),
 		html.Div(id='redirect_edit_branch'),
 		html.Div(id='new_Network')
-
 	]
 )
 
-
+# @callback(
+# 	Output('cytoscape-callbacks-1', 'tapNodeData'),
+# 	Input('updateButton', 'n_clicks'),
+# 	State('cytoscape-callbacks-1', 'elements'),
+# 	State('cytoscape-callbacks-1', 'tapNodeData'),
+# 	prevent_initial_call=True
+# )
+# def refresh(n_clicks, elements, tapNodeData):
+# 	print(tapNodeData)
+# 	return
 
 @callback(
 	Output("addButton", "is_open"),
@@ -165,39 +186,73 @@ def update_network_view(value):
 		return 'Current network view: {}'.format("Layered View")
 	
 
+@callback(
+	Output('cytoscape-callbacks-1', 'tapNodeData'),
+	Input('cytoscape-callbacks-1', 'elements'),
+	prevent_initial_call=True
+)
+def resetTapNodeData(elements):
+	return None
 
 @callback(
 	Output('cytoscape-callbacks-1', 'elements'),
 	Input('cytoscape-callbacks-1', 'tapNodeData'),
+	Input('previousBranchButton', 'n_clicks'),
+	State('cytoscape-callbacks-1', 'elements'),
+	State('cytoscape-callbacks-1', 'tapNodeData'),
 	prevent_initial_call=True
 )
-def displayNodeData(data):
+def displayNodeData(data, n_clicks, elements, nodeData):
+	ctx = dash.callback_context
+	global previous_branch
+
+	if 'previousBranchButton' in ctx.triggered[0]['prop_id'].split('.')[0]:
+		if previous_branch:
+			previous_data = previous_branch.pop()
+			return previous_data
+		else:
+			return elements
+	# if not being called by tapNodeData, return --> used to counteract 
+	# circular callback
+	elif not ctx.triggered:
+		return
+
+
 	keys = list(data)
 	branch_name = ""
 	branch_id = ""
+
 	for x in keys:
 		if 'label' in x:
 			branch_name = data[x]
 		elif 'id' in x:
 			branch_id = data[x]
-	print(branch_id)
-	query = "SELECT branch_level FROM org_chart_branches WHERE branch_title=\'" + branch_name + "\'" ;
+	query = "SELECT branch_level FROM org_chart_branches WHERE branch_id=" + branch_id
+
+	cursor.execute(query)
+	current_level = cursor.fetchall()[0][0]
+
+	if("Community" in current_level):
+		print('lowest level reached')
+		return elements
+	previous_branch.append(elements)
+
+	query = "SELECT child_branch_id FROM child_branches WHERE current_branch_id=" + branch_id
+
 	cursor.execute(query)
 
-	# Cursor returns a list of tuples - since we know that there will only be one level
-	# returned, we can index the first tuple of the list, and then index the first
-	# element of that tuple
-	level = (cursor.fetchall())[0][0]
+	# Fetch the response of the query
+	list_of_children = cursor.fetchall()
 
-	query = "SELECT target_id FROM edges WHERE source_id=" + branch_id
-	cursor.execute(query)
-	list_of_ids = cursor.fetchall()
-	list_of_ids = [i[0] for i in list_of_ids]
-	query = "SELECT branch_id, branch_title FROM org_chart_branches WHERE branch_id IN (" + ','.join(str(x) for x in list_of_ids) + ")"
-	cursor.execute(query)
-	list_of_titles = cursor.fetchall()
-	list_of_titles = [(str(x[0]), str(x[1])) for x in list_of_titles]
+	# Convert the list of [(x,), (x,), (x,)]
+	# to q regular list of (x, x, x)
+	list_of_children = [int(i[0]) for i in list_of_children]
 
+	# Fetch all branch names and ids
+	query = "SELECT branch_id, branch_title FROM org_chart_branches WHERE branch_id IN (" + ','.join(str(x) for x in list_of_children) + ")"
+	cursor.execute(query)
+	title_id_tuples = cursor.fetchall()
+	title_id_tuples= [(str(x[0]), str(x[1])) for x in title_id_tuples]
 
 	nodes = [
 	{
@@ -205,16 +260,11 @@ def displayNodeData(data):
 		'position': {'x': 5 * int(short), 'y': -5 * int(short)}
 	}
 		for short, label in (
-			list_of_titles
+			title_id_tuples
 		)
 	]
 	edges = []
-
 	return nodes + edges
-
-
-	
-
 
 @callback(
 	Output('redirect_add_branch', 'children'),
