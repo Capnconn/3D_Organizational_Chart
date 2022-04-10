@@ -7,60 +7,74 @@ import mysql.connector
 import json
 
 previous_branch = []
+bayerdb = []
+curosr = []
 
-styles = {
-    'pre': {
-        'border': 'thin lightgrey solid',
-        'overflowX': 'scroll'
-    }
-}
-
-# Query the database for the top level of nodes
-bayerdb = mysql.connector.connect(
-	host="localhost",
-	user="root",
-	password="root",
-	database="bayerdatabase"
-)
-cursor = bayerdb.cursor(buffered=True);
-cursor.execute("""SELECT branch_id, branch_title FROM org_chart_branches WHERE branch_level='Division'""");
-division_tuple = cursor.fetchall()
-
-division_tuple = [(str(x[0]), str(x[1])) for x in division_tuple]
-# print(division_tuple)
-
-nodes = [
-	{
-		'data': {'id': short, 'label': label},
-		'position': {'x': 5 * int(short), 'y': -5 * int(short)}
+#############################################################################################
+# Initialize network on layered view, and with nodes
+# at the highest level (Division).
+# Initialize here rather than with initial callback,
+# because this produces quicker results when the web page loads
+def initialzeNetworkLayered():
+	styles = {
+	    'pre': {
+	        'border': 'thin lightgrey solid',
+	        'overflowX': 'scroll'
+	    }
 	}
-	for short, label in (
-		division_tuple
+
+	global bayerdb
+	# Query the database for the top level of nodes
+	bayerdb = mysql.connector.connect(
+		host="localhost",
+		user="root",
+		password="root",
+		database="bayerdatabase"
 	)
-]
+	global cursor
+	cursor = bayerdb.cursor(buffered=True);
+	cursor.execute("""SELECT branch_id, branch_title FROM org_chart_branches WHERE branch_level='Division'""");
+	division_tuple = cursor.fetchall()
 
-# print(nodes)
-source_id_list = []
-for x in division_tuple:
-	source_id_list.append(x[0])
+	division_tuple = [(str(x[0]), str(x[1])) for x in division_tuple]
+	# print(division_tuple)
+
+	nodes = [
+		{
+			'data': {'id': short, 'label': label},
+			'position': {'x': 5 * int(short), 'y': -5 * int(short)}
+		}
+		for short, label in (
+			division_tuple
+		)
+	]
+
+	# print(nodes)
+	source_id_list = []
+	for x in division_tuple:
+		source_id_list.append(x[0])
 
 
-query = "SELECT source_id, target_id FROM edges WHERE source_id IN (" + ','.join(str(x) for x in source_id_list) + ")"
-cursor.execute(query)
+	query = "SELECT source_id, target_id FROM edges WHERE source_id IN (" + ','.join(str(x) for x in source_id_list) + ")"
+	cursor.execute(query)
 
-edge_id_list = cursor.fetchall()
-edge_id_list = [(str(x[0]), str(x[1])) for x in edge_id_list]
+	edge_id_list = cursor.fetchall()
+	edge_id_list = [(str(x[0]), str(x[1])) for x in edge_id_list]
 
-# edges = [
-# 	{'data': {'source': source, 'target': target}}
-# 	for source, target in (
-# 		edge_id_list
-# 	)	
-# ]
+	# edges = [
+	# 	{'data': {'source': source, 'target': target}}
+	# 	for source, target in (
+	# 		edge_id_list
+	# 	)	
+	# ]
 
-edges = []
+	edges = []
 
-elements = nodes + edges
+	return (nodes + edges)
+
+
+elements = initialzeNetworkLayered()
+#############################################################################################
 
 layout = html.Div(className='MainMenu', 
 	children=[
@@ -113,9 +127,10 @@ layout = html.Div(className='MainMenu',
 						id='networkViewToggle',
 						className='networkToggleCss',
 						value=False,
-						label='Click to change network view',
+						label='Layered View',
+						labelPosition='bottom',
 						color='green',
-						size=50
+						size=50				
 					),
 					html.Div(id='my-toggle-switch-output')
 				]
@@ -123,9 +138,7 @@ layout = html.Div(className='MainMenu',
 			html.Div(className='previousBranchDivCss', children=
 				[
 					html.P("Previous Branch: x", id='previous-branch', className='previousBranchCss', style={'display': 'none'}),
-					html.Button('Previous Branch', id='previousBranchButton', className='previousBranchButtonCss'),
-					html.Button('update', id='updateButton', className='previousBranchButtonCss')
-
+					html.Button('Previous Branch', id='previousBranchButton', className='previousBranchButtonCss')
 				]
 			),
 			html.Div(className='mainMenuNetwork', children=
@@ -134,11 +147,22 @@ layout = html.Div(className='MainMenu',
 						autoungrabify=True,
 						userZoomingEnabled=False,
 						id='cytoscape-callbacks-1',
-						elements=(nodes+edges),
+						elements=elements,
 						style={'width': '100%', 'height': '400px'},
 						layout={
-						'name': 'circle'
-						}
+						'name': 'random', 'directed':True
+						},
+						# stylesheet=[
+						# 	{
+						# 		'selector': 'edge',
+						# 		'style': {
+						# 			'source-arrow-color': 'red',
+				  #                   'source-arrow-shape': 'triangle',
+				  #                   'curve-style': 'bezier'
+
+						# 		}
+						# 	}
+						# ]
 
 					),
     				html.Div(id='cytoscape-tapNodeData-json'),
@@ -150,17 +174,6 @@ layout = html.Div(className='MainMenu',
 		html.Div(id='new_Network')
 	]
 )
-
-# @callback(
-# 	Output('cytoscape-callbacks-1', 'tapNodeData'),
-# 	Input('updateButton', 'n_clicks'),
-# 	State('cytoscape-callbacks-1', 'elements'),
-# 	State('cytoscape-callbacks-1', 'tapNodeData'),
-# 	prevent_initial_call=True
-# )
-# def refresh(n_clicks, elements, tapNodeData):
-# 	print(tapNodeData)
-# 	return
 
 @callback(
 	Output("addButton", "is_open"),
@@ -176,14 +189,25 @@ def openCollapsibleMenu(n_clicks):
 		return False, False, False
 
 
-@callback(
-	Output('my-toggle-switch-output', 'children'),
-	Input('networkViewToggle', 'value'))
-def update_network_view(value):
-	if value:
-		return 'Current network view: {}'.format("Network Overview")
-	else:
-		return 'Current network view: {}'.format("Layered View")
+# @callback(
+# 	Output('my-toggle-switch-output', 'children'),
+# 	Outpu('')
+# 	Input('networkViewToggle', 'value')
+# )
+# def update_network_view(value):
+# 	if value:
+# 		# Overview
+# 		return '{}'.format("Network Overview")
+# 	else:
+# 		# Layer view
+# 		cursor = bayerdb.cursor(buffered=True);
+# 		cursor.execute("""SELECT branch_id, branch_title FROM org_chart_branches WHERE branch_level='Division'""");
+# 		division_tuple = cursor.fetchall()
+
+# 		division_tuple = [(str(x[0]), str(x[1])) for x in division_tuple]
+
+
+# 		return '{}'.format("Layered View")
 	
 
 @callback(
@@ -196,28 +220,48 @@ def resetTapNodeData(elements):
 
 @callback(
 	Output('cytoscape-callbacks-1', 'elements'),
+	Output('networkViewToggle', 'style'),
 	Input('cytoscape-callbacks-1', 'tapNodeData'),
 	Input('previousBranchButton', 'n_clicks'),
+	Input('networkViewToggle', 'value'),
 	State('cytoscape-callbacks-1', 'elements'),
+	State('networkViewToggle', 'style'),
 	State('cytoscape-callbacks-1', 'tapNodeData'),
 	prevent_initial_call=True
 )
-def displayNodeData(data, n_clicks, elements, nodeData):
+def displayNodeData(data, n_clicks, value, elements, currentStyle, nodeData):
 	ctx = dash.callback_context
 	global previous_branch
 
 	if 'previousBranchButton' in ctx.triggered[0]['prop_id'].split('.')[0]:
+		print('previous')
 		if previous_branch:
 			previous_data = previous_branch.pop()
-			return previous_data
+			return previous_data, currentStyle
 		else:
-			return elements
+			return elements, currentStyle
 	# if not being called by tapNodeData, return --> used to counteract 
 	# circular callback
 	elif not ctx.triggered:
 		return
+	elif 'networkViewToggle' in ctx.triggered[0]['prop_id'].split('.')[0]:
+		print('toggle clicked')
+		if value:
+			print('toggle overview')
+			return initializeNetworkOverview(), currentStyle
+		elif not value:
+			print('toggle Layered')
+			return initialzeNetworkLayered(), currentStyle
+	elif 'cytoscape-callbacks-1' in ctx.triggered[0]['prop_id'].split('.')[0]:
+		print('next layer')
+		if value:
+			return elements, currentStyle
+		elif not value:
+			return goToNextLayer(data, elements), currentStyle
 
 
+
+def goToNextLayer(data, elements):
 	keys = list(data)
 	branch_name = ""
 	branch_id = ""
@@ -235,6 +279,7 @@ def displayNodeData(data, n_clicks, elements, nodeData):
 	if("Community" in current_level):
 		print('lowest level reached')
 		return elements
+	global previous_branch
 	previous_branch.append(elements)
 
 	query = "SELECT child_branch_id FROM child_branches WHERE current_branch_id=" + branch_id
@@ -264,6 +309,40 @@ def displayNodeData(data, n_clicks, elements, nodeData):
 		)
 	]
 	edges = []
+	return nodes + edges
+
+def initializeNetworkOverview():
+	query = "SELECT branch_id, branch_title FROM org_chart_branches"
+	cursor.execute(query)
+	node_list = cursor.fetchall()
+	node_list = [(str(x[0]), str(x[1])) for x in node_list]
+	
+	nodes = [
+	{
+		'data': {'id': short, 'label': label},
+		'position': {'x': 5 * int(short), 'y': -5 * int(short)}
+	}
+		for short, label in (
+			node_list
+		)
+	]
+
+	query = "SELECT source_id, target_id FROM edges";
+	cursor.execute(query)
+	edge_list = cursor.fetchall()
+	edge_list = [(str(x[0]), str(x[1])) for x in edge_list]
+
+	edges = [
+	{
+		'data': {'source': source, 'target': target}
+	}
+		for source, target in (
+			edge_list
+		)
+
+	]
+
+
 	return nodes + edges
 
 @callback(
