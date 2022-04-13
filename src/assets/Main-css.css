@@ -22,7 +22,7 @@ body {
 	margin: 10px;
 }
 
-.paragraphCredential, .linkLabel, .nodeLabel {
+.paragraphCredential, .node1Label, .node2Label {
 	margin:  5px;
 	margin-left: 25%;
 	font-size: 13px;
@@ -74,7 +74,7 @@ body {
 	
 }
 
-.LoginButton, .addBranchCss, .homeButtonCss, .deleteBranchCss, .deleteALink, .deleteANode, .goHome {
+.LoginButton, .addBranchCss, .homeButtonCss, .deleteBranchCss, .deleteABranch, .goHome {
 	background-color: #32CD32; /*limegreen*/
 	color: white;
 	border-radius: 12px;
