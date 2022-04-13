@@ -7,17 +7,17 @@
 from dash import Dash, dcc, html, Input, Output, callback, State
 import mysql.connector
 
-connection = mysql.connector.connect(user='root', password='root', host='localhost', database='bayerdatabase')
-bayerdb = connection.cursor()
+bayerdb = mysql.connector.connect(user='root', password='root', host='localhost', database='bayerdatabase')
+cursor = bayerdb.cursor(buffered=True)
 
 layout = html.Div(className='DeletePageLayout',
     children=[
         html.H1("Delete a branch from the network", className="deleteNodeLabel", style={'color':'white'}),
-		html.P("Enter a title for Node 1 to delete that organizational branch and all of its' connections from Bayer network. Enter titles for two nodes to delete the connection between those two nodes.", id="instructions", className="instructions"),
+		html.P("Enter a title for Branch 1 to delete that organizational branch and all of its' connections from Bayer network. Enter titles for two branches to delete the connection between those two branches.", id="instructions", className="instructions"),
 		html.Br(),
         html.Div(className="deleteNode1Body",
             children=[
-                html.P("Node 1: ", id="Node1", className="node1Label"),
+                html.P("Branch 1: ", id="Node1", className="node1Label"),
                 dcc.Input(id="node1Title", type="search", style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}),
                 html.P(id='spacing'),
             ],
@@ -25,7 +25,7 @@ layout = html.Div(className='DeletePageLayout',
         
         html.Div(className="deleteNode2Body",
             children=[
-                html.P("Node 2: ", id="Node2", className="node2Label"),
+                html.P("Branch 2: ", id="Node2", className="node2Label"),
                 dcc.Input(id="node2Title", type="search",  style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}),
                 html.P(id='spacing'),
                 
@@ -51,11 +51,93 @@ layout = html.Div(className='DeletePageLayout',
 def handleDeleteBranch(n_clicks, node1, node2):
 
     if not node1:
-        return html.P('*Please enter a value for Node 1', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+        return html.P('*Please enter a value for Branch 1', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+    elif node1 and not node2:
+        select_node1_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
+    
+        cursor.execute(select_node1_id, (node1,))
+        
+        match = cursor.fetchone()
+        
+        if match is not None:
+        
+            node1_id = int(''.join(map(str, match)))
+        
+            delete_all_node1_edges = "DELETE FROM edges WHERE source_id=%s OR target_id=%s"
+        
+            cursor.execute(delete_all_node1_edges, (node1_id,node1_id))
+            
+            bayerdb.commit()
+        
+            delete_node1 = "DELETE FROM child_branches WHERE current_branch_id=%s OR child_branch_id=%s"
+        
+            cursor.execute(delete_node1, (node1_id, node1_id,))
+            
+            bayerdb.commit()
+            
+            delete_node1 = "DELETE FROM parent_branches WHERE current_branch_id=%s OR parent_branch_id=%s"
+        
+            cursor.execute(delete_node1, (node1_id, node1_id,))
+            
+            bayerdb.commit()
+            
+            delete_node1 = "DELETE FROM org_chart_branches WHERE branch_id=%s"
+        
+            cursor.execute(delete_node1, (node1_id,))
+            
+            bayerdb.commit()
+        
+            return html.P('*Branch 1 was deleted successfully', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '300px'})
+        
+        else:
+        
+            return html.P('That title for Branch 1 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+        
+        
     elif node1 and node2:
-        return html.P('*Connection between node1 and node2 deleted.', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '300px'})
+        
+        select_node_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
+    
+        cursor.execute(select_node_id, (node1,))
+        
+        node1_match = cursor.fetchone()
+    
+        cursor.execute(select_node_id, (node2,))
+        
+        node2_match = cursor.fetchone()
+        
+        if node1_match is not None and node2_match is not None:
+        
+            node1_id = int(''.join(map(str, node1_match)))
+            node2_id = int(''.join(map(str, node2_match)))
+            
+            delete_edge = "DELETE FROM edges WHERE source_id=%s AND target_id=%s"
+        
+            cursor.execute(delete_edge, (node1_id,node2_id))
+            
+            bayerdb.commit()
+
+            cursor.execute(delete_edge,(node2_id, node1_id))
+
+            bayerdb.commit()
+
+            return html.P('*Connection between Branch 1 and Branch 2 deleted.', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '300px'})
+
+        elif node1_match is None:
+
+            return html.P('That title for Branch 1 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+
+        elif node2_match is None:
+
+             return html.P('That title for Branch 2 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+
+        else:
+
+             return html.P('Neither title was found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+
     else:
-        return html.P('*Node 1 was deleted successfully', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '300px'})
+
+        return html.P('*Branch 2 cannot be the only entry', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '300px'})
 
 @callback(
 	Output('hidden_div_for_redirect_callback_return_home', 'children'),
