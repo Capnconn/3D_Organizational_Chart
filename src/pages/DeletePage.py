@@ -7,9 +7,11 @@
 from dash import Dash, dcc, html, Input, Output, callback, State
 import mysql.connector
 
+#Connect to database and create a cursor to interact with database
 bayerdb = mysql.connector.connect(user='root', password='root', host='localhost', database='bayerdatabase')
 cursor = bayerdb.cursor(buffered=True)
 
+#Create a webpage with two textboxes, a "Home" button and a "delete" button
 layout = html.Div(className='DeletePageLayout',
     children=[
         html.H1("Delete a branch from the network", className="deleteNodeLabel", style={'color':'white'}),
@@ -40,6 +42,7 @@ layout = html.Div(className='DeletePageLayout',
     ]
 )
 
+#Whenever the delete button is clicked, send the user input from the textboxes to the handler
 @callback(
     Output('hidden_div_for_redirect_callback_delete_branch', 'children'),
     Input('deleteBranchButton', 'n_clicks'),
@@ -48,6 +51,9 @@ layout = html.Div(className='DeletePageLayout',
     prevent_initial_call=True
 )
 
+#Compares user input to branch titles in database. If user only provides one input and a match is found, data is deleted from org_level_branches, edges, parent_branches, and child_branches.
+#If user provides two inputs with matches, the edge between the two nodes in the edges table is deleted. If no match is found for one or both inputs, an informative message is posted
+#to the web page for the user.
 def handleDeleteBranch(n_clicks, node1, node2):
 
     if not node1:
@@ -138,7 +144,7 @@ def handleDeleteBranch(n_clicks, node1, node2):
     else:
 
         return html.P('*Branch 2 cannot be the only entry', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '300px'})
-
+#When the "Home" button is clicked, return to Main Menu
 @callback(
 	Output('hidden_div_for_redirect_callback_return_home', 'children'),
 	Input('goHomeButton', 'n_clicks'),

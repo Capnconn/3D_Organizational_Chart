@@ -21,6 +21,8 @@ class read_csv:
 	children = []
 	record_count = 0
 	
+	#the columns of each ro are read into their respective lists. record_count is incremented for each row to be used when writing data to database
+	
 	def read_csv_file(self, file_name):
 	
 		
@@ -52,6 +54,9 @@ class read_csv:
 		# print(self.record_count)
 		file.close()
 		
+		#Connect to the database. Lines 71-75 read each record into org_chart_branches, which contains details of individual teams
+		#Lines 86-111 read edge info of each team into the edges table. 117-136 fo parent_branches. 141-165 for child_branches.
+		
 	def write_csv_to_database(self):
 		bayerdb = mysql.connector.connect(
 		host="localhost",
@@ -70,9 +75,9 @@ class read_csv:
 				
 			bayerdb.commit() #required to update database through python.
 		
-		cursor.execute("SELECT * FROM org_chart_branches")
+		#cursor.execute("SELECT * FROM org_chart_branches")
 		
-		display_records = cursor.fetchall() #fetches all matches from last executed statement
+		#display_records = cursor.fetchall() #fetches all matches from last executed statement
 		
 		#for x in display_records:
 			# print(x)
@@ -90,7 +95,7 @@ class read_csv:
 				
 				cursor.execute(select_branch_id, (self.title[x],))
 				
-				source_id = int(''.join(map(str, cursor.fetchone())))
+				source_id = int(''.join(map(str, cursor.fetchone())))#Converts tuple returned by MySQL into an int
 				
 				if(dependent_branch_title != "None"):
 				
