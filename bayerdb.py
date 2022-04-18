@@ -9,15 +9,56 @@
 #Lines 28-36 insert values into org_levels
 #Lines 58-61 confirm all three tables were created
 import mysql.connector
+from mysql.connector import errorcode
+
+# try:
+#     bayerdb = mysql.connector.connect(
+#     	host="localhost",
+#     	user="root",
+#     	password="root",
+#         database="bayerdatabase"
+#     )
+#     print("Database already created");
+#     cursor = bayerdb.cursor()
+# except mysql.connector.Error as err:
+#     if err.errno == errorcode.ER_BAD_DB_ERROR:
+#         print("Database does not yet exist, creating database with name: bayerdatabase.")
+#         bayerdb = mysql.connector.connect(
+#                 host="localhost",
+#                 user="root",
+#                 password="root",
+#             )
+#         cursor = bayerdb.cursor()
+#         cursor.execute("CREATE DATABASE bayerdatabase")
+#         bayerdb = mysql.connector.connect(
+#             host="localhost",
+#             user="root",
+#             password="root",
+#             database="bayerdatabase"
+#         )
+#         print("Database successfully created.")
 
 bayerdb = mysql.connector.connect(
-	host="localhost",
-	user="root",
-	password="root",
-    database="bayerdatabase"
-	)
-    
+        host="localhost",
+        user="root",
+        password="root",
+    )
 cursor = bayerdb.cursor()
+cursor.execute("CREATE DATABASE IF NOT EXISTS bayerdatabase")
+
+bayerdb = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='root',
+    database='bayerdatabase'
+)
+
+cursor = bayerdb.cursor()
+    
+
+
+
+
 
 cursor.execute(
 """CREATE TABLE IF NOT EXISTS org_levels
@@ -25,15 +66,15 @@ cursor.execute(
     description VARCHAR(255))"""
 )
 
-# insert_level_into_org_levels = "INSERT INTO org_levels (level, description) VALUES (%s, %s)"
-# vals = [
-   # ("Division", "Highest level of Bayer's business model; contains Crop Science, Pharmaceuticals, and Consumer Health industries"),
-   # ("Department", "Secondary level; focused interest areas w/in each division"),
-   # ("Platform", "Tertiary level that contributes functionality to departments"),
-   # ("Community", "Quarternary level that handles individual roles that make up platform tasks")
-# ]
+insert_level_into_org_levels = "INSERT INTO org_levels (level, description) VALUES (%s, %s)"
+vals = [
+   ("Division", "Highest level of Bayer's business model; contains Crop Science, Pharmaceuticals, and Consumer Health industries"),
+   ("Department", "Secondary level; focused interest areas w/in each division"),
+   ("Platform", "Tertiary level that contributes functionality to departments"),
+   ("Community", "Quarternary level that handles individual roles that make up platform tasks")
+]
 
-# cursor.executemany(insert_level_into_org_levels, vals)
+cursor.executemany(insert_level_into_org_levels, vals)
 
 
 cursor.execute(

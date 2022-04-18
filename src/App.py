@@ -1,6 +1,8 @@
 from dash import Dash, dcc, html, Input, Output, callback
 from pages import AdminLoginPage, AddNewBranch, DeletePage, MainMenu, EditBranch
-App = Dash(__name__, suppress_callback_exceptions=True)
+import dash_bootstrap_components as dbc
+
+App = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True, )
 
 App.layout = html.Div([
     dcc.Location(id='url', refresh=True),
@@ -23,8 +25,11 @@ def display_page(pathname):
     elif pathname == '/MainMenu':
         return MainMenu.layout;
     else:
-        return '404: page not found'
+        return AdminLoginPage.layout
 
 
 if __name__ == '__main__':
     App.run_server(debug=True)
+
+    # Disables circular callback error
+    # App.run_server(debug=False)
