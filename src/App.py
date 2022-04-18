@@ -25,7 +25,7 @@ def display_page(pathname):
     elif pathname == '/MainMenu':
         return MainMenu.layout;
     else:
-        return '404: page not found'
+        return AdminLoginPage.layout
 
 
 if __name__ == '__main__':
