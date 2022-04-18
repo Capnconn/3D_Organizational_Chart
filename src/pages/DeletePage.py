@@ -11,6 +11,24 @@ import mysql.connector
 bayerdb = mysql.connector.connect(user='root', password='root', host='localhost', database='bayerdatabase')
 cursor = bayerdb.cursor(buffered=True)
 
+branch_titles = []
+
+select_all_branch_titles = "SELECT branch_title FROM org_chart_branches"
+
+cursor.execute(select_all_branch_titles)
+
+next_title = cursor.fetchone()
+
+while next_title is not None:
+
+    next_branch_title_string = str(''.join(map(str, next_title)))
+
+    branch_titles.append(next_branch_title_string)
+
+    next_title = cursor.fetchone()
+
+print(branch_titles)
+
 #Create a webpage with two textboxes, a "Home" button and a "delete" button
 layout = html.Div(className='DeletePageLayout',
     children=[
@@ -19,16 +37,16 @@ layout = html.Div(className='DeletePageLayout',
 		html.Br(),
         html.Div(className="deleteNode1Body",
             children=[
-                html.P("Branch 1: ", id="Node1", className="node1Label"),
-                dcc.Input(id="node1Title", type="search", style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}),
+                #html.P("Branch 1: ", id="Node1", className="node1Label"),
+                dcc.Dropdown(id="node1Title", options=branch_titles, placeholder="Select a first branch to delete"),
                 html.P(id='spacing'),
             ],
         ),
         
         html.Div(className="deleteNode2Body",
             children=[
-                html.P("Branch 2: ", id="Node2", className="node2Label"),
-                dcc.Input(id="node2Title", type="search",  style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}),
+                #html.P("Branch 2: ", id="Node2", className="node2Label"),
+                dcc.Dropdown(id="node2Title", options=branch_titles, placeholder="Select a second branch to delete"),
                 html.P(id='spacing'),
                 
             ],
@@ -42,7 +60,7 @@ layout = html.Div(className='DeletePageLayout',
     ]
 )
 
-#Whenever the delete button is clicked, send the user input from the textboxes to the handler
+#Whenever the delete button is clicked, send the user input from the dropdowns to the handler
 @callback(
     Output('hidden_div_for_redirect_callback_delete_branch', 'children'),
     Input('deleteBranchButton', 'n_clicks'),
