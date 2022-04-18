@@ -22,6 +22,7 @@ bayerdb = []
 curosr = []
 fig = []
 nodes_clicked = []
+initial_elements = []
 
 #############################################################################################
 # Initialize network on layered view, and with nodes
@@ -83,6 +84,9 @@ def initialzeNetworkLayered():
 
 	edges = []
 	elements = nodes + edges
+
+	global initial_elements
+	initial_elements = elements
 
 	return cyto.Cytoscape(
 				userZoomingEnabled=False,
@@ -217,6 +221,8 @@ def displayNetwork(value):
 	if value:
 		return createNetwork()
 	elif not value:
+		global nodes_clicked
+		nodes_clicked = []
 		return initialzeNetworkLayered()
 
 @callback(
@@ -226,7 +232,9 @@ def displayNetwork(value):
 	prevent_initial_call=True
 )
 def retreiveTappedNodeInfo(data, elements):
+	print('this is happening in retreive tapped into')
 	if not data:
+		print('return1')
 		return elements
 
 	keys = list(data)
@@ -242,6 +250,7 @@ def retreiveTappedNodeInfo(data, elements):
 
 	global nodes_clicked
 	if branch_name in nodes_clicked:
+		print('return2')
 		return elements
 	else:
 		nodes_clicked.append(branch_name)
@@ -253,6 +262,7 @@ def retreiveTappedNodeInfo(data, elements):
 
 	# If no children, return
 	if not children_list:
+		print('return3')
 		return elements
 
 	children_list = [str(x[0]) for x in children_list]
