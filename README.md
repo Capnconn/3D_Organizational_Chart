@@ -19,7 +19,10 @@
 Python uses a mysql.connector library to connect to MySQL databases. After a connection is made, a cursor is used to execute queries. 
 The queries used to create the tables in the bayerdatabase (and to edit them) are parameterized. User-input values are added to the queries to add interactivity to the network.
 
+
 The database is created by hand. Executing bayerdb.py will create all of the necessary tables. Executing readcsv.py will populate all of the tables.
+
+If traceback errors occur, try to delete the database and rerun bayerdb.py and readcsv.py.
 
 CAUTION: MySQL results are returned as tuples! Special conversions are needed to manipulate them in Python:
 
