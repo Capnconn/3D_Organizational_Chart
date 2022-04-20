@@ -55,6 +55,8 @@ layout = html.Div(className='DeletePageLayout',
         
         html.Button("Delete Branch", id="deleteBranchButton", className="deleteABranch"),
         html.Button('Home', id='goHomeButton', className='goHome'),
+        html.Br(),
+        html.Img(className='bayerButton', src="/assets/img/bayer.png" , style={'height':'10%', 'width':'10%', 'left': '20px'}),
         html.Div(id="hidden_div_for_redirect_callback_delete_branch"),
         html.Div(id="hidden_div_for_redirect_callback_return_home")
     ]
@@ -75,7 +77,7 @@ layout = html.Div(className='DeletePageLayout',
 def handleDeleteBranch(n_clicks, node1, node2):
 
     if not node1:
-        return html.P('*Please enter a value for Branch 1', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+        return html.P('*Please enter a value for Branch 1', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
     elif node1 and not node2:
         select_node1_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
     
