@@ -24,6 +24,8 @@ fig = []
 nodes_clicked = []
 initial_elements = []
 
+print("this is executing on load/reload")
+
 #############################################################################################
 # Initialize network on layered view, and with nodes
 # at the highest level (Division).
@@ -143,8 +145,7 @@ layout = html.Div(className='MainMenu',
 						],
 						className="mt-3"
 					),
-					#html.Button('Filter', id='filterButton', className='filterMenuCss'),
-					
+					html.Button('Filter', id='filterButton', className='filterMenuCss'),
 				]
 			),
 			html.Div(className='mainMenuToggle', children=
@@ -164,7 +165,7 @@ layout = html.Div(className='MainMenu',
 			html.Div(className='previousBranchDivCss', children=
 				[
 					html.P("Previous Branch: x", id='previous-branch', className='previousBranchCss', style={'display': 'none'}),
-					#html.Button('Previous Branch', id='previousBranchButton', className='previousBranchButtonCss')
+					html.Button('Previous Branch', id='previousBranchButton', className='previousBranchButtonCss')
 				]
 			),
 			html.Div(id='network_Placement', className='mainMenuNetwork', children=
@@ -175,8 +176,7 @@ layout = html.Div(className='MainMenu',
 		html.Div(id='redirect_add_branch'),
 		html.Div(id='redirect_delete_branch'),
 		html.Div(id='redirect_edit_branch'),
-		html.Div(id='new_Network'),
-		html.Img(className='bayerButton', src="/assets/img/bayer.png" , style={'height':'10%', 'width':'10%'})
+		html.Div(id='new_Network')
 	]
 )
 
@@ -234,7 +234,6 @@ def displayNetwork(value):
 	prevent_initial_call=True
 )
 def retreiveTappedNodeInfo(data, elements):
-	print('this is happening in retreive tapped into')
 	if not data:
 		print('return1')
 		return elements
@@ -277,9 +276,6 @@ def retreiveTappedNodeInfo(data, elements):
 	# Convert fetched dependencies to strings
 	dependency_list = [(str(x[0]), str(x[1])) for x in dependency_list]
 
-	print("Dependencies:")
-	print(dependency_list)
-
 	new_node_list = []
 
 	# If there are dependencies among the children nodes of the clicked node, then proceed with finding these dependency nodes, if not, skip
@@ -295,9 +291,6 @@ def retreiveTappedNodeInfo(data, elements):
 		# Convert the new node_list values to strings
 		new_node_list = [(str(x[0]), str(x[1])) for x in new_node_list]
 
-		print("Edge nodes:")
-		print(new_node_list)
-
 	# Now query for the rest of the information of the children nodes (branch_title)
 	query = "SELECT branch_id, branch_title FROM org_chart_branches WHERE branch_id IN (" + ','.join(str(x) for x in children_list) + ")"
 	cursor.execute(query)
@@ -306,14 +299,8 @@ def retreiveTappedNodeInfo(data, elements):
 	# Convert the children_list values to strings
 	children_list = [(str(x[0]), str(x[1])) for x in children_list]
 
-	print("Children nodes:")
-	print(children_list)
-
 	# Combine nodes to add lists
 	total_new_nodes = children_list + new_node_list
-
-	print("Total new nodes being added:")
-	print(total_new_nodes)
 
 	nodes = [
 	{
@@ -520,6 +507,10 @@ def createNetwork():
 		# labels.append(node[0])
 
 	N = len(node_list)
+	# print(labels)
+	# print(N)
+
+
 
 	# for x in range(N):
 	# 	print("(" + str(node_id[x]) + "," + str(labels[x]) +")")
@@ -550,10 +541,10 @@ def createNetwork():
 	# 	if edge not in no_double_edges and edge[::-1] not in no_double_edges:
 	# 		no_double_edges.append(edge)
 
-	edges = [(int(x[0]), int(x[1])) for x in edges]
+	edges = [(int(x[0])-1, int(x[1])-1) for x in edges]
 
 	
-	G = ig.Graph(N ,edges, directed=False)
+	G = ig.Graph(N, edges, directed=False)
 
 	layt = G.layout('kk', dim=3)
 
@@ -561,7 +552,13 @@ def createNetwork():
 	Yn = []
 	Zn = []
 
-	for x in range(1,N):
+	# print(len(layt))
+
+	for x in range(0,N):
+		# print(str(x) + ": " + str(labels[x]))
+		# print(layt[x][0])
+		# print(layt[x][1])
+		# print(layt[x][2])
 
 		Xn += [layt[x][0]]
 		Yn += [layt[x][1]]
@@ -649,6 +646,7 @@ def createNetwork():
 
 	global figure
 	fig=go.Figure(data=data, layout=layout)
+	# print(fig)
 
 	return dcc.Graph(figure=fig)
 
