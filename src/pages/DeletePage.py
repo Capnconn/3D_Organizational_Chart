@@ -62,7 +62,6 @@ layout = html.Div(className='DeletePageLayout',
         ),
         
         html.Button("Delete Branch", id="deleteBranchButton", className="deleteABranch"),
-		html.Button("Update Lists", id="updateDropDownListsButton", className="updateDropDownLists"),
         html.Button('Home', id='goHomeButton', className='goHome'),
         html.Br(),
         html.Img(className='bayerButton', src="/assets/img/bayer.png" , style={'height':'10%', 'width':'10%', 'left': '20px'}),
@@ -74,14 +73,7 @@ layout = html.Div(className='DeletePageLayout',
 @callback(
     Output('node1Title', 'options'),
     Output('node2Title', 'options'),
-<<<<<<< HEAD
-    Input('updateDropDownListsButton', 'n_clicks'),
-    prevent_initial_call=True
-)
-
-def handleOptionsUpdates(n_clicks):
-=======
-    Input('node1Title', 'value')
+    Input('node1Title', 'value'),
 )
 
 def handleOptionsUpdates(node1Dropdown):
@@ -90,7 +82,7 @@ def handleOptionsUpdates(node1Dropdown):
     if ctx.triggered[0]['prop_id'] == ".":
         options = populate_dropdown_menus()
         return options, options
->>>>>>> 99538940d5c2bd9e1940408f2e9b398cd3912210
+
 
     new_options = []
     new_options = populate_dropdown_menus()
