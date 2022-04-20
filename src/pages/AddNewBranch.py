@@ -40,13 +40,23 @@ layout = html.Div(className='AddNewBranchMain',
 				html.Br(),
 				dcc.Input(id='branchDescription', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}, placeholder="Enter a Branch Description"),
 			],
-			style={'paddingTop': '90px'}
+			#style={'paddingTop': '90px'}
 		),
 
-
+		
+		
 		html.Button('Add Branch', id='addButton', className='addButtonCss', style={'position': 'relative', 'top': '180px'}),
-		html.Br(),
+		
 		html.Button('Home', id='homeButton', className='homeButtonCss', style={'position': 'relative', 'top': '180px'}),
+		html.Br(),
+		html.Br(),
+		html.Br(),
+		html.Br(),
+		html.Br(),
+		html.Br(),
+		html.Br(),
+		html.Br(),
+		html.Img(className='bayerButton', src="/assets/img/bayer.png" , style={'height':'10%', 'width':'10%', 'left': '20px'}),
 		html.Div(id='hidden_div_for_redirect_callback_add_branch'),
 		html.Div(id='hidden_div_for_redirect_callback_home_button')
 	]

@@ -143,7 +143,8 @@ layout = html.Div(className='MainMenu',
 						],
 						className="mt-3"
 					),
-					html.Button('Filter', id='filterButton', className='filterMenuCss'),
+					#html.Button('Filter', id='filterButton', className='filterMenuCss'),
+					
 				]
 			),
 			html.Div(className='mainMenuToggle', children=
@@ -163,7 +164,7 @@ layout = html.Div(className='MainMenu',
 			html.Div(className='previousBranchDivCss', children=
 				[
 					html.P("Previous Branch: x", id='previous-branch', className='previousBranchCss', style={'display': 'none'}),
-					html.Button('Previous Branch', id='previousBranchButton', className='previousBranchButtonCss')
+					#html.Button('Previous Branch', id='previousBranchButton', className='previousBranchButtonCss')
 				]
 			),
 			html.Div(id='network_Placement', className='mainMenuNetwork', children=
@@ -174,7 +175,8 @@ layout = html.Div(className='MainMenu',
 		html.Div(id='redirect_add_branch'),
 		html.Div(id='redirect_delete_branch'),
 		html.Div(id='redirect_edit_branch'),
-		html.Div(id='new_Network')
+		html.Div(id='new_Network'),
+		html.Img(className='bayerButton', src="/assets/img/bayer.png" , style={'height':'10%', 'width':'10%'})
 	]
 )
 

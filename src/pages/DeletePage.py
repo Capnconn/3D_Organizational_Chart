@@ -60,6 +60,8 @@ layout = html.Div(className='DeletePageLayout',
         
         html.Button("Delete Branch", id="deleteBranchButton", className="deleteABranch"),
         html.Button('Home', id='goHomeButton', className='goHome'),
+        html.Br(),
+        html.Img(className='bayerButton', src="/assets/img/bayer.png" , style={'height':'10%', 'width':'10%', 'left': '20px'}),
         html.Div(id="hidden_div_for_redirect_callback_delete_branch"),
         html.Div(id="hidden_div_for_redirect_callback_return_home")
     ]

@@ -15,9 +15,13 @@ layout = html.Div(className='EditBranchMain',
 				dcc.Input(id='info3', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}),
                 html.P(id='spacing'),
 				html.Button('Edit', id='editBranchButton', className='addBranchCss'),
+				
+
                 html.P('Current Info 1: xxxxxx', id='branchNameP4', className='paragraphCredential'),
-                 html.P('Current Info 2: xxxxxx', id='branchNameP5', className='paragraphCredential'),
-                  html.P('Current Info 3: xxxxxx', id='branchNameP6', className='paragraphCredential'),
+                html.P('Current Info 2: xxxxxx', id='branchNameP5', className='paragraphCredential'),
+                html.P('Current Info 3: xxxxxx', id='branchNameP6', className='paragraphCredential'),
+				html.Br(),
+				html.Img(className='bayerButton', src="/assets/img/bayer.png" , style={'height':'10%', 'width':'10%', 'left': '20px'}),
 			],
 			style={'paddingTop': '90px'}
 		),
