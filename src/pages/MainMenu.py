@@ -518,7 +518,6 @@ def createNetwork():
 		# labels.append(node[0])
 
 	N = len(node_list)
-	print(level)
 
 	# for x in range(N):
 	# 	print("(" + str(node_id[x]) + "," + str(labels[x]) +")")
@@ -552,7 +551,7 @@ def createNetwork():
 	edges = [(int(x[0]), int(x[1])) for x in edges]
 
 	
-	G = ig.Graph(edges, directed=False)
+	G = ig.Graph(N ,edges, directed=False)
 
 	layt = G.layout('kk', dim=3)
 
@@ -560,13 +559,12 @@ def createNetwork():
 	Yn = []
 	Zn = []
 
-	for x in range(1,N+1):
-		# print(str(x) + ": " + str(layt[x][0]))
-		# print(str(x) + ": " + str(layt[x][1]))
-		# print(str(x) + ": " + str(layt[x][2]))
+	for x in range(1,N):
+
 		Xn += [layt[x][0]]
 		Yn += [layt[x][1]]
 		Zn += [layt[x][2]]
+
 
 	print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
