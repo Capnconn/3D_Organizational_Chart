@@ -48,8 +48,8 @@ layout = html.Div(className='AddNewBranchMain',
 
 		html.Div(className='AddLevel', 
 			children=[
-				#html.P("Branch 1: ", id="Node1", className="node1Label"),
-                dcc.Dropdown(id="branchLevel", options=branch_levels, placeholder="Select the level of the Branch"),
+				#html.
+				dcc.Dropdown(id="branchLevel", options=branch_levels, placeholder="Select the level of the Branch"),
                 html.P(id='spacing'),
 				dcc.Input(id='branchName', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}, placeholder="Enter a Branch Name"),
 				html.Br(),
@@ -57,12 +57,15 @@ layout = html.Div(className='AddNewBranchMain',
 				html.Br(),
 				dcc.Input(id='branchDescription', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}, placeholder="Enter a Branch Description"),
 			
-			#style={'paddingTop': '90px'}
+			
+			
 				dcc.Dropdown(id="branchEdges", options=branch_titles, placeholder="Select some dependencies for the new branch", multi=True),
 				dcc.Input(id='edgeDescriptions', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}, placeholder="Enter a description for the relationship. Separate multiple descriptions with commas"),
 				dcc.Dropdown(id="branchParent", options=branch_titles, placeholder="Select a parent for the new branch"),
 				dcc.Dropdown(id="branchChildren", options=branch_titles, placeholder="Select some children for the new branch", multi=True)
 			],
+			
+			style={'width':'50%'}
 		),
 
 		

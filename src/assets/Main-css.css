@@ -74,7 +74,7 @@ body {
 	
 }
 
-.LoginButton, .addBranchCss, .homeButtonCss, .deleteBranchCss, .updateDropDownLists, .deleteABranch, .goHome, .addButtonCss {
+.LoginButton, .addBranchCss, .homeButtonCss, .deleteBranchCss, .deleteABranch, .goHome, .addButtonCss {
 	background-color: #32CD32; /*limegreen*/
 	color: white;
 	border-radius: 12px;
