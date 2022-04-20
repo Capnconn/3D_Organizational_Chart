@@ -14,7 +14,7 @@ cursor.execute(select_all_branch_levels)
 next_level = cursor.fetchone()
 
 while next_level is not None:
-	
+
     next_branch_level_string = str(''.join(map(str, next_level)))
 
     branch_levels.append(next_branch_level_string)
@@ -25,21 +25,20 @@ branch_levels = list(set(branch_levels))
 # print(branch_levels)
 
 branch_titles = []
-    select_all_branch_titles = "SELECT branch_title FROM org_chart_branches"
 
-    cursor.execute(select_all_branch_titles)
+select_all_branch_titles = "SELECT branch_title FROM org_chart_branches"
+
+cursor.execute(select_all_branch_titles)
+
+next_title = cursor.fetchone()
+
+while next_title is not None:
+
+    next_branch_title_string = str(''.join(map(str, next_title)))
+
+    branch_titles.append(next_branch_title_string)
 
     next_title = cursor.fetchone()
-
-    while next_title is not None:
-
-        next_branch_title_string = str(''.join(map(str, next_title)))
-
-        branch_titles.append(next_branch_title_string)
-
-        next_title = cursor.fetchone()
-
-    return branch_titles
 
 
 
@@ -59,10 +58,10 @@ layout = html.Div(className='AddNewBranchMain',
 				dcc.Input(id='branchDescription', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}, placeholder="Enter a Branch Description"),
 			],
 			#style={'paddingTop': '90px'}
-		dcc.Dropdown(id="branchEdges", options=branch_titles, placeholder="Select some dependencies for the new branch", multi=True)
-		dcc.Input(id='edgeDescriptions', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}, placeholder="Enter a description for the relationship. Separate multiple descriptions with commas."),
-		dcc.Dropdown(id="branchParent", options=branch_titles, placeholder="Select a parent for the new branch")
-		dcc.Dropdown(id="branchChildren", options=branch_titles, placeholder="Select some children for the new branch", multi=True)
+		dcc.Dropdown(id="branchEdges", options=branch_titles, placeholder="Select some dependencies for the new branch"),
+		dcc.Input(id='edgeDescriptions', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '20px'}, placeholder="Enter a description for the relationship. Separate multiple descriptions with commas"),
+		dcc.Dropdown(id="branchParent", options=branch_titles, placeholder="Select a parent for the new branch"),
+		dcc.Dropdown(id="branchChildren", options=branch_titles, placeholder="Select some children for the new branch")
 		),
 
 		
@@ -112,19 +111,19 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 		bayerdb.commit()
 		
 		select_node_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
-    
-        	cursor.execute(select_node_id, (branch,))
-        
-        	current_match = cursor.fetchone()
-    
-       	cursor.execute(select_node_id, (parent,))
-        
-        	parent_match = cursor.fetchone()
-        	
-        	if current_match is not None and parent_match is not None:
-        
-            		current_id = int(''.join(map(str, current_match)))
-            		parent_id = int(''.join(map(str, parent_match)))
+
+		cursor.execute(select_node_id, (branch,))
+
+		current_match = cursor.fetchone()
+
+		cursor.execute(select_node_id, (parent,))
+
+		parent_match = cursor.fetchone()
+
+		if current_match is not None and parent_match is not None:
+
+			current_id = int(''.join(map(str, current_match)))
+			parent_id = int(''.join(map(str, parent_match)))
 		
 			cursor.execute(
 					"""INSERT INTO parent_branches 
@@ -134,22 +133,22 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 			bayerdb.commit()
 		
 		cursor.execute(select_node_id, (branch,))
-        
-        	current_match = cursor.fetchone()
-    
-       	cursor.execute(select_node_id, (children,))
-        
-        	next_child_match = cursor.fetchone()
-        	
-        	if current_match is not None:
-        	
-        		current_match_id = int(''.join(map(str, current_match)))
-        		
-        		while next_child_match is not None:
-        		
-        			next_child_id = int(''.join(map(str, next_child_match)))
-        			
-        			cursor.execute(
+
+		current_match = cursor.fetchone()
+
+		cursor.execute(select_node_id, (children,))
+
+		next_child_match = cursor.fetchone()
+
+		if current_match is not None:
+	
+			current_match_id = int(''.join(map(str, current_match)))
+			
+			while next_child_match is not None:
+
+				next_child_id = int(''.join(map(str, next_child_match)))
+
+				cursor.execute(
 					"""INSERT INTO child_branches 
 					(current_branch_id, child_branch_id) 
 					VALUES(%s, %s)""", (current_match_id, next_child_id))	
@@ -163,24 +162,24 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 		edge_descriptions.append(edgeDescriptions.split(", "))
 		
 		cursor.execute(select_node_id, (branch,))
-        
-        	current_match = cursor.fetchone()
-    
-       	cursor.execute(select_node_id, (edges,))
-        
-        	next_edge_match = cursor.fetchone()
-        	
-        	if current_match is not None:
-        	
-        		i = 0
-        	
-        		current_match_id = int(''.join(map(str, current_match)))
-        		
-        		while next_edge_match is not None:
-        		
-        			next_edge_id = int(''.join(map(str, next_edge_match)))
-        			
-        			cursor.execute(
+
+		current_match = cursor.fetchone()
+
+		cursor.execute(select_node_id, (edges,))
+
+		next_edge_match = cursor.fetchone()
+
+		if current_match is not None:
+
+			i = 0
+
+			current_match_id = int(''.join(map(str, current_match)))
+			
+			while next_edge_match is not None:
+			
+				next_edge_id = int(''.join(map(str, next_edge_match)))
+
+				cursor.execute(
 					"""INSERT INTO edges
 					(source_id, target_branch_id, edge_description) 
 					VALUES(%s, %s, %s)""", (current_match_id, next_edge_id, edge_descriptions[i]))	
@@ -194,7 +193,7 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 				
 				bayerdb.commit()
 				
-				i++
+				i+=1
 				
 				next_edge_match = cursor.fetchone()
         			
