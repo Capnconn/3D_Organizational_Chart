@@ -1,13 +1,13 @@
 #Author: Ashlen Ashton
 #Date: January 30, 2022
 #File: bayerdb.py
-#exe instructions: python3 bayerdb.py (Linux Ubuntu). Uncomment lines 28-36 if running first time
-#comment 28-36 for subsequent runs. Run MySQL Sever prior to execution
+#exe instructions: python3 bayerdb.py (Linux Ubuntu). Uncomment lines 69-77 if running first time
+#comment 69-77 for subsequent runs. Run MySQL Sever prior to execution
 
-#Lines 13-20 establish connection to server and create a cursor object to interact w/ MySQL
-#Lines 22-26, 39-47, 49-57 create tables w/in bayerdatabase
-#Lines 28-36 insert values into org_levels
-#Lines 58-61 confirm all three tables were created
+#Lines 41-45 establish connection to server and create a cursor object to interact w/ MySQL
+#Lines 63-67, 80-88, 90-97, 99-105, 107-113 create tables w/in bayerdatabase
+#Lines 69-77 insert values into org_levels
+#Lines 115-120 confirm all five tables were created
 import mysql.connector
 from mysql.connector import errorcode
 
@@ -68,7 +68,7 @@ cursor.execute(
 
 insert_level_into_org_levels = "INSERT INTO org_levels (level, description) VALUES (%s, %s)"
 vals = [
-   ("Division", "Highest level of Bayer's business model; contains Crop Science, Pharmaceuticals, and Consumer Health industries"),
+   ("Division", "Highest level of Bayer's business model; contains teams within Crop Science, Pharmaceuticals, and Consumer Health industries"),
    ("Department", "Secondary level; focused interest areas w/in each division"),
    ("Platform", "Tertiary level that contributes functionality to departments"),
    ("Community", "Quarternary level that handles individual roles that make up platform tasks")
