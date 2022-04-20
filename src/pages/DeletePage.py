@@ -71,7 +71,7 @@ layout = html.Div(className='DeletePageLayout',
     Output('node1Title', 'options'),
     Output('node2Title', 'options'),
     Input('node1Title', 'value'),
-    #prevent_initial_call=True
+    prevent_initial_call=True
 )
 
 def handleOptionsUpdates(node1Dropdown):
