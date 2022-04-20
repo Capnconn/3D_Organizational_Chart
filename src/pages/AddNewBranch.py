@@ -22,7 +22,7 @@ while next_level is not None:
     next_level = cursor.fetchone()
 #removes duplicates for drop down menu
 branch_levels = list(set(branch_levels))
-print(branch_levels)
+# print(branch_levels)
 
 
 layout = html.Div(className='AddNewBranchMain', 

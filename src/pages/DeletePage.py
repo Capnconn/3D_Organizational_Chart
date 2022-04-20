@@ -6,6 +6,8 @@
 
 from dash import Dash, dcc, html, Input, Output, callback, State
 import mysql.connector
+import dash
+
 
 #Connect to database and create a cursor to interact with database
 bayerdb = mysql.connector.connect(user='root', password='root', host='localhost', database='bayerdatabase')
@@ -32,7 +34,8 @@ def populate_dropdown_menus():
 
     return branch_titles
 
-dropdown_options = populate_dropdown_menus()
+# dropdown_options = populate_dropdown_menus()
+
 
 #Create a webpage with two dropdowns, a "Home" button and a "delete" button
 layout = html.Div(className='DeletePageLayout',
@@ -71,11 +74,23 @@ layout = html.Div(className='DeletePageLayout',
 @callback(
     Output('node1Title', 'options'),
     Output('node2Title', 'options'),
+<<<<<<< HEAD
     Input('updateDropDownListsButton', 'n_clicks'),
     prevent_initial_call=True
 )
 
 def handleOptionsUpdates(n_clicks):
+=======
+    Input('node1Title', 'value')
+)
+
+def handleOptionsUpdates(node1Dropdown):
+    ctx = dash.callback_context
+
+    if ctx.triggered[0]['prop_id'] == ".":
+        options = populate_dropdown_menus()
+        return options, options
+>>>>>>> 99538940d5c2bd9e1940408f2e9b398cd3912210
 
     new_options = []
     new_options = populate_dropdown_menus()
@@ -97,8 +112,7 @@ def handleOptionsUpdates(n_clicks):
 #If user provides two inputs with matches, the edge between the two nodes in the edges table is deleted. If no match is found for one or both inputs, an informative message is posted
 #to the web page for the user.
 def handleDeleteBranch(n_clicks, node1, node2):
-
-    
+        
 
     if not node1:
         return html.P('*Please enter a value for Branch 1', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
