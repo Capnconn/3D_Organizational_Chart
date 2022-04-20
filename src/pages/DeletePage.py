@@ -111,11 +111,11 @@ def handleDeleteBranch(n_clicks, node1, node2):
             
             bayerdb.commit()
         
-            return html.P('*Branch 1 was deleted successfully', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '300px'})
+            return html.P('*Branch 1 was deleted successfully', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
         
         else:
         
-            return html.P('That title for Branch 1 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+            return html.P('That title for Branch 1 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
         
         
     elif node1 and node2:
@@ -145,23 +145,40 @@ def handleDeleteBranch(n_clicks, node1, node2):
 
             bayerdb.commit()
 
-            return html.P('*Connection between Branch 1 and Branch 2 deleted.', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '300px'})
+            return html.P('*Connection between Branch 1 and Branch 2 deleted.', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
 
         elif node1_match is None:
 
-            return html.P('That title for Branch 1 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+            return html.P('That title for Branch 1 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
 
         elif node2_match is None:
 
-             return html.P('That title for Branch 2 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+             return html.P('That title for Branch 2 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
 
         else:
 
-             return html.P('Neither title was found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+             return html.P('Neither title was found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
 
     else:
 
-        return html.P('*Branch 2 cannot be the only entry', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '300px'})
+        return html.P('*Branch 2 cannot be the only entry', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
+
+    branch_titles = []
+
+    select_all_branch_titles = "SELECT branch_title FROM org_chart_branches"
+
+    cursor.execute(select_all_branch_titles)
+
+    next_title = cursor.fetchone()
+
+    while next_title is not None:
+
+        next_branch_title_string = str(''.join(map(str, next_title)))
+
+        branch_titles.append(next_branch_title_string)
+
+        next_title = cursor.fetchone()
+
 #When the "Home" button is clicked, return to Main Menu
 @callback(
 	Output('hidden_div_for_redirect_callback_return_home', 'children'),
