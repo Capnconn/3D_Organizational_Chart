@@ -43,7 +43,7 @@ layout = html.Div(className='DeletePageLayout',
         html.Div(className="deleteNode1Body",
             children=[
                 #html.P("Branch 1: ", id="Node1", className="node1Label"),
-                dcc.Dropdown(id="node1Title", options=dropdown_options, placeholder='Select a first branch'),
+                dcc.Dropdown(id="node1Title", options=dropdown_options, placeholder='Select first branch'),
                 html.P(id='spacing'),
             ],
         ),
@@ -51,7 +51,7 @@ layout = html.Div(className='DeletePageLayout',
         html.Div(className="deleteNode2Body",
             children=[
                 #html.P("Branch 2: ", id="Node2", className="node2Label"),
-                dcc.Dropdown(id="node2Title", options=dropdown_options, placeholder='Select a second branch'),
+                dcc.Dropdown(id="node2Title", options=dropdown_options, placeholder='Select second branch'),
                 html.P(id='spacing'),
                 
             ],
@@ -59,6 +59,7 @@ layout = html.Div(className='DeletePageLayout',
         ),
         
         html.Button("Delete Branch", id="deleteBranchButton", className="deleteABranch"),
+		html.Button("Update Lists", id="updateDropDownListsButton", className="updateDropDownLists"),
         html.Button('Home', id='goHomeButton', className='goHome'),
         html.Br(),
         html.Img(className='bayerButton', src="/assets/img/bayer.png" , style={'height':'10%', 'width':'10%', 'left': '20px'}),
@@ -70,17 +71,18 @@ layout = html.Div(className='DeletePageLayout',
 @callback(
     Output('node1Title', 'options'),
     Output('node2Title', 'options'),
-    Input('node1Title', 'value'),
+    Input('updateDropDownListsButton', 'n_clicks'),
     prevent_initial_call=True
 )
 
-def handleOptionsUpdates(node1Dropdown):
+def handleOptionsUpdates(n_clicks):
 
     new_options = []
     new_options = populate_dropdown_menus()
     print(new_options)
-
     return new_options, new_options
+
+
 
 #Whenever the delete button is clicked, send the user input from the dropdowns to the handler
 @callback(
