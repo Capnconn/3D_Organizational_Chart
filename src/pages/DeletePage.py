@@ -43,7 +43,7 @@ layout = html.Div(className='DeletePageLayout',
         html.Div(className="deleteNode1Body",
             children=[
                 #html.P("Branch 1: ", id="Node1", className="node1Label"),
-                dcc.Dropdown(id="node1Title", options=dropdown_options, value=dropdown_options[0]),
+                dcc.Dropdown(id="node1Title", options=dropdown_options, placeholder='Select a first branch'),
                 html.P(id='spacing'),
             ],
         ),
@@ -51,7 +51,7 @@ layout = html.Div(className='DeletePageLayout',
         html.Div(className="deleteNode2Body",
             children=[
                 #html.P("Branch 2: ", id="Node2", className="node2Label"),
-                dcc.Dropdown(id="node2Title", options=dropdown_options, value=dropdown_options[0]),
+                dcc.Dropdown(id="node2Title", options=dropdown_options, placeholder='Select a second branch'),
                 html.P(id='spacing'),
                 
             ],
