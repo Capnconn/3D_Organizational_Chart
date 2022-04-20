@@ -11,25 +11,30 @@ import mysql.connector
 bayerdb = mysql.connector.connect(user='root', password='root', host='localhost', database='bayerdatabase')
 cursor = bayerdb.cursor(buffered=True)
 
-branch_titles = []
+dropdown_options = []
 
-select_all_branch_titles = "SELECT branch_title FROM org_chart_branches"
+def populate_dropdown_menus():
+    
+    branch_titles = []
+    select_all_branch_titles = "SELECT branch_title FROM org_chart_branches"
 
-cursor.execute(select_all_branch_titles)
-
-next_title = cursor.fetchone()
-
-while next_title is not None:
-
-    next_branch_title_string = str(''.join(map(str, next_title)))
-
-    branch_titles.append(next_branch_title_string)
+    cursor.execute(select_all_branch_titles)
 
     next_title = cursor.fetchone()
 
-print(branch_titles)
+    while next_title is not None:
 
-#Create a webpage with two textboxes, a "Home" button and a "delete" button
+        next_branch_title_string = str(''.join(map(str, next_title)))
+
+        branch_titles.append(next_branch_title_string)
+
+        next_title = cursor.fetchone()
+
+    return branch_titles
+
+dropdown_options = populate_dropdown_menus()
+
+#Create a webpage with two dropdowns, a "Home" button and a "delete" button
 layout = html.Div(className='DeletePageLayout',
     children=[
         html.H1("Delete a branch from the network", className="deleteNodeLabel", style={'color':'white'}),
@@ -38,7 +43,7 @@ layout = html.Div(className='DeletePageLayout',
         html.Div(className="deleteNode1Body",
             children=[
                 #html.P("Branch 1: ", id="Node1", className="node1Label"),
-                dcc.Dropdown(id="node1Title", options=branch_titles, placeholder="Select a first branch to delete"),
+                dcc.Dropdown(id="node1Title", options=dropdown_options, value=dropdown_options[0]),
                 html.P(id='spacing'),
             ],
         ),
@@ -46,7 +51,7 @@ layout = html.Div(className='DeletePageLayout',
         html.Div(className="deleteNode2Body",
             children=[
                 #html.P("Branch 2: ", id="Node2", className="node2Label"),
-                dcc.Dropdown(id="node2Title", options=branch_titles, placeholder="Select a second branch to delete"),
+                dcc.Dropdown(id="node2Title", options=dropdown_options, value=dropdown_options[0]),
                 html.P(id='spacing'),
                 
             ],
@@ -60,12 +65,27 @@ layout = html.Div(className='DeletePageLayout',
     ]
 )
 
+@callback(
+    Output('node1Title', 'options'),
+    Output('node2Title', 'options'),
+    Input('node1Title', 'value'),
+    #prevent_initial_call=True
+)
+
+def handleOptionsUpdates(node1Dropdown):
+
+    new_options = []
+    new_options = populate_dropdown_menus()
+    print(new_options)
+
+    return new_options, new_options
+
 #Whenever the delete button is clicked, send the user input from the dropdowns to the handler
 @callback(
     Output('hidden_div_for_redirect_callback_delete_branch', 'children'),
     Input('deleteBranchButton', 'n_clicks'),
     State('node1Title', 'value'),
-	State('node2Title', 'value'),
+    State('node2Title', 'value'),
     prevent_initial_call=True
 )
 
@@ -74,8 +94,10 @@ layout = html.Div(className='DeletePageLayout',
 #to the web page for the user.
 def handleDeleteBranch(n_clicks, node1, node2):
 
+    
+
     if not node1:
-        return html.P('*Please enter a value for Branch 1', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+        return html.P('*Please enter a value for Branch 1', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
     elif node1 and not node2:
         select_node1_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
     
@@ -110,7 +132,7 @@ def handleDeleteBranch(n_clicks, node1, node2):
             cursor.execute(delete_node1, (node1_id,))
             
             bayerdb.commit()
-        
+            
             return html.P('*Branch 1 was deleted successfully', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
         
         else:
@@ -149,35 +171,24 @@ def handleDeleteBranch(n_clicks, node1, node2):
 
         elif node1_match is None:
 
+            
+
             return html.P('That title for Branch 1 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
 
         elif node2_match is None:
 
-             return html.P('That title for Branch 2 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
+          
+
+            return html.P('That title for Branch 2 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
 
         else:
+            
 
-             return html.P('Neither title was found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
+            return html.P('Neither title was found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
 
     else:
 
         return html.P('*Branch 2 cannot be the only entry', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
-
-    branch_titles = []
-
-    select_all_branch_titles = "SELECT branch_title FROM org_chart_branches"
-
-    cursor.execute(select_all_branch_titles)
-
-    next_title = cursor.fetchone()
-
-    while next_title is not None:
-
-        next_branch_title_string = str(''.join(map(str, next_title)))
-
-        branch_titles.append(next_branch_title_string)
-
-        next_title = cursor.fetchone()
 
 #When the "Home" button is clicked, return to Main Menu
 @callback(
@@ -186,4 +197,5 @@ def handleDeleteBranch(n_clicks, node1, node2):
 	prevent_initial_call=True
 )
 def handleReturnHome(n_clicks):
-	return dcc.Location(pathname='/MainMenu', id='tempL')
+
+    return dcc.Location(pathname='/MainMenu', id='tempL')
