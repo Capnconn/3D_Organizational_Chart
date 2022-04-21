@@ -212,9 +212,6 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 		
 			edge_descriptions.append(edgeDescriptions.split(", "))
 			
-			print(edge_descriptions)
-			print(edgeDescriptions)
-			
 		
 			cursor.execute(select_node_id, (branch,))
 
@@ -222,7 +219,7 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 		
 			for x in range(len(edges)):
 			
-					print(edge_descriptions[x][y])
+					
 					cursor.execute(select_node_id, (edges[x],))
 
 					next_edge_match = cursor.fetchone()
