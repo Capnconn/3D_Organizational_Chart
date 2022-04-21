@@ -70,7 +70,7 @@ layout = html.Div(className='AddNewBranchMain',
 			#style={'paddingTop': '90px'}
 				dcc.Dropdown(id="branchEdges", options=dropdown_options, placeholder="Select some dependencies for the new branch", multi=True),
 				html.Br(),
-				dcc.Input(id='edgeDescriptions', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a description for the relationship. Separate multiple descriptions with commas"),
+				dcc.Input(id='edgeDescriptions', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a description for the dependency. Separate multiple descriptions with commas"),
 				html.Br(),
 				html.Br(),
 				dcc.Dropdown(id="branchParent", options=dropdown_options, placeholder="Select a parent for the new branch"),
@@ -133,7 +133,7 @@ def handleOptionsUpdates(branchLevelDropdown):
 def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescriptions, parent, children):
 	
 	if not level or not branch or not num or not descriptions:
-		return html.P('* A branch must have a level, title, number of employees', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+		return html.P('* A branch must have a level, title, number of employees, and a description', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '350px'})
 	else:
 		cursor.execute(
 				"""INSERT INTO org_chart_branches 
@@ -172,7 +172,8 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 					
 				bayerdb.commit()
 				
-				
+			else:
+				return html.P('*Divisions do not have parents', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '350px'})
 		
 		if children is not None:
 			cursor.execute(select_node_id, (branch,))
@@ -244,7 +245,7 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 				
 						bayerdb.commit()
 				
-		return html.P(level + ' ' + branch + ' ' + str(num) + ' ' + descriptions + ' * Branch was added successfully', id='tempP', style={'color': 'white', 'position': 'relative', 'bottom': '80px'})
+		return html.P(branch + ' was added successfully', id='tempP', style={'color': 'white','position': 'relative', 'bottom': '350px'})
 
 @callback(
 	Output('hidden_div_for_redirect_callback_home_button', 'children'),

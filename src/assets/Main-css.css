@@ -34,9 +34,9 @@ body {
 	text-align: left;
 }
 
-.filterMenuCss{
+/*.filterMenuCss{
 	display: block;
-	background-color: #32CD32; /*limegreen*/
+	background-color: #32CD32; /*limegreen
 	color: white;
 	border-radius: 12px;
 	border: 1px solid grey;
@@ -46,7 +46,7 @@ body {
 	cursor: pointer;
 	position: relative;
 	top: 400px;
-}
+}*/
 
 .MainMenuTitle{
 	margin: auto;
@@ -111,7 +111,7 @@ body {
 	font-size: 25px;
 }
 
-.LoginButton:active, .addBranchCss:active, .deleteBranchCss:active, .editBranchCss:active, .deleteALink:active, .previousBranchButtonCss:active {
+.LoginButton:active, .addBranchCss:active, .deleteBranchCss:active, .editBranchCss:active, .deleteALink:active {
 	position: relative;
 	top: 1px;
 }
@@ -151,8 +151,8 @@ body {
 	text-align: top;
 }
 
-.previousBranchDivCss {
+/*.previousBranchDivCss {
 	margin-left: 15%;
 	padding-top: 0;
 	height: 50px;
-}
+}*/

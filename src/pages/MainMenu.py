@@ -148,13 +148,13 @@ layout = html.Div(className='MainMenu',
 	children=[
 			html.Div(className='MainMenuTitle', children=
 				[
-					html.H1('Bayer 3D Chart', className='mainMenuHeader'),
+					html.H1('Bayer 3D Network', className='mainMenuHeader', style={'color': 'white'}),
 				]
 			),
 			html.Div(className='mainMenuBody', children=
 				[
 					dbc.Button(
-						"Open collapse",
+						"Edit the Network",
 						id='collapse-button',
 						className='collapseButtonCss',
 						color='primary',
@@ -186,7 +186,7 @@ layout = html.Div(className='MainMenu',
 						],
 						className="mt-3"
 					),
-					html.Button('Filter', id='filterButton', className='filterMenuCss'),
+					
 				]
 			),
 			html.Div(className='mainMenuToggle', children=
@@ -195,7 +195,7 @@ layout = html.Div(className='MainMenu',
 						id='networkViewToggle',
 						className='networkToggleCss',
 						value=False,
-						label='Layered View',
+						label='Layered/3D',
 						labelPosition='bottom',
 						color='green',
 						size=50				
@@ -203,12 +203,12 @@ layout = html.Div(className='MainMenu',
 					html.Div(id='my-toggle-switch-output')
 				]
 			),
-			html.Div(className='previousBranchDivCss', children=
-				[
-					html.P("Previous Branch: x", id='previous-branch', className='previousBranchCss', style={'display': 'none'}),
-					html.Button('Previous Branch', id='previousBranchButton', className='previousBranchButtonCss')
-				]
-			),
+			# html.Div(className='previousBranchDivCss', children=
+				# [
+					# html.P("Previous Branch: x", id='previous-branch', className='previousBranchCss', style={'display': 'none'}),
+					# html.Button('Previous Branch', id='previousBranchButton', className='previousBranchButtonCss')
+				# ]
+			# ),
 			html.Div(id='network_Placement', className='mainMenuNetwork', children=
 				[
 				]
