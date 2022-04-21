@@ -1,5 +1,6 @@
 from dash import Dash, dcc, html, Input, Output, callback, State
 import mysql.connector
+import dash
 
 #Connect to database and create a cursor to interact with database
 bayerdb = mysql.connector.connect(user='root', password='root', host='localhost', database='bayerdatabase')
@@ -24,21 +25,27 @@ while next_level is not None:
 branch_levels = list(set(branch_levels))
 # print(branch_levels)
 
-branch_titles = []
+dropdown_options = []
 
-select_all_branch_titles = "SELECT branch_title FROM org_chart_branches"
+def populate_dropdown_menus():
 
-cursor.execute(select_all_branch_titles)
+	branch_titles = []
 
-next_title = cursor.fetchone()
+	select_all_branch_titles = "SELECT branch_title FROM org_chart_branches"
 
-while next_title is not None:
+	cursor.execute(select_all_branch_titles)
 
-    next_branch_title_string = str(''.join(map(str, next_title)))
+	next_title = cursor.fetchone()
 
-    branch_titles.append(next_branch_title_string)
+	while next_title is not None:
 
-    next_title = cursor.fetchone()
+		next_branch_title_string = str(''.join(map(str, next_title)))
+
+		branch_titles.append(next_branch_title_string)
+
+		next_title = cursor.fetchone()
+	
+	return branch_titles
 
 
 
@@ -61,14 +68,14 @@ layout = html.Div(className='AddNewBranchMain',
 				html.Br(),
 				html.Br(),
 			#style={'paddingTop': '90px'}
-				dcc.Dropdown(id="branchEdges", options=branch_titles, placeholder="Select some dependencies for the new branch", multi=True),
+				dcc.Dropdown(id="branchEdges", options=dropdown_options, placeholder="Select some dependencies for the new branch", multi=True),
 				html.Br(),
 				dcc.Input(id='edgeDescriptions', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a description for the relationship. Separate multiple descriptions with commas"),
 				html.Br(),
 				html.Br(),
-				dcc.Dropdown(id="branchParent", options=branch_titles, placeholder="Select a parent for the new branch"),
+				dcc.Dropdown(id="branchParent", options=dropdown_options, placeholder="Select a parent for the new branch"),
 				html.Br(),
-				dcc.Dropdown(id="branchChildren", options=branch_titles, placeholder="Select some children for the new branch", multi=True)
+				dcc.Dropdown(id="branchChildren", options=dropdown_options, placeholder="Select some children for the new branch", multi=True)
 			],
 		),
 
@@ -91,7 +98,24 @@ layout = html.Div(className='AddNewBranchMain',
 	]
 )
 
+@callback(
+    Output('branchEdges', 'options'),
+	Output('branchParent', 'options'),
+	Output('branchChildren', 'options'),
+    Input('branchLevel', 'value'),
+)
 
+def handleOptionsUpdates(branchLevelDropdown):
+    ctx = dash.callback_context
+
+    if ctx.triggered[0]['prop_id'] == ".":
+        options = populate_dropdown_menus()
+        return options, options, options
+
+
+    new_options = []
+    new_options = populate_dropdown_menus()
+    return new_options, new_options, new_options
 
 @callback(
 	Output('hidden_div_for_redirect_callback_add_branch', 'children'),
@@ -197,7 +221,6 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 			current_match = cursor.fetchone()
 		
 			for x in range(len(edges)):
-				for y in range(len(edge_descriptions[x])):
 			
 					print(edge_descriptions[x][y])
 					cursor.execute(select_node_id, (edges[x],))
@@ -213,14 +236,14 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 						cursor.execute(
 							"""INSERT INTO edges
 							(source_id, target_id, edge_description) 
-							VALUES(%s, %s, %s)""", (current_match_id, next_edge_id, edge_descriptions[x][y]))	
+							VALUES(%s, %s, %s)""", (current_match_id, next_edge_id, edge_descriptions[0][x]))	
 				
 						bayerdb.commit()
 				
 						cursor.execute(
 							"""INSERT INTO edges
 							(source_id, target_id, edge_description) 
-							VALUES(%s, %s, %s)""", (next_edge_id, current_match_id, edge_descriptions[x][y]))	
+							VALUES(%s, %s, %s)""", (next_edge_id, current_match_id, edge_descriptions[0][x]))	
 				
 						bayerdb.commit()
 				
