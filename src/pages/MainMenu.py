@@ -25,7 +25,7 @@ nodes_clicked = []
 initial_elements = []
 node_data = {}
 nodes_in_network = []
-edges_in_network = []
+edges_in_network = {}
 
 
 #############################################################################################
@@ -106,6 +106,7 @@ def initialzeNetworkLayered():
 
 	global initial_elements
 	initial_elements = elements
+	print(elements)
 
 	return (cyto.Cytoscape(
 				userZoomingEnabled=False,
@@ -115,6 +116,26 @@ def initialzeNetworkLayered():
 				layout={
 					'name': 'random', 'animate': True, 'animationDuration': 2000
 				},
+				stylesheet=[
+        			{
+						'selector': 'node',
+						'style': {
+							'label': 'data(label)'
+						}
+					},
+					{
+						'selector': 'edge',
+						'style': {
+							'curve-style': 'bezier'
+						}
+					},
+     				{
+						'selector': 'data(id)',
+						'style': {
+							'source-arrow-shape': 'triangle',
+                		}
+					}
+				]
 			),
 	    	html.P(id='cytoscape-callbacks-1-hoverNode-output'),
     		html.P(id='cytoscape-callbacks-1-hoverEdge-output')
@@ -200,6 +221,18 @@ layout = html.Div(className='MainMenu',
 )
 
 @callback(
+	Output('cytoscape-callbacks-1-hoverEdge-output', 'children'),
+	Input('cytoscape-callbacks-1', 'mouseoverEdgeData'),
+ 	Input('cytoscape-callbacks-1', 'tapEdgeData'),
+	prevent_initial_call=True
+)
+def displayEdgeData(data1, data2):
+	hoveredNode = data1['id']
+	print(data1)
+	print(edges_in_network)
+	return edges_in_network[hoveredNode]
+
+@callback(
 	Output('cytoscape-callbacks-1-hoverNode-output', 'children'),
 	Input('cytoscape-callbacks-1', 'mouseoverNodeData'),
 	prevent_initial_call=True
@@ -268,42 +301,43 @@ def retreiveTappedNodeInfo(data, elements):
 	cursor.execute(query)
 	children_list = cursor.fetchall()
  
-	query = "SELECT source_id, target_id FROM edges WHERE source_id=" + branch_id
+	query = "SELECT * FROM edges WHERE source_id=" + branch_id
 	cursor.execute(query)
-	dependency_list = cursor.fetchall()
+	query_results = cursor.fetchall()
  
-	print(dependency_list)
+	print(query_results)
  
-	if not children_list and not dependency_list:
+	if not children_list and not query_results:
 		print("returning no")
 		return elements
 
 	new_node_dependencies = []
+	dependency_list = []
 
 	# If there are dependencies:
-	if dependency_list:
+	if query_results:
      
+		global edges_in_network
 		# convert dependency list to a list of ID's
-		dependency_list = [(str(x[0]), str(x[1])) for x in dependency_list]
+		# dependency_list = [(str(x[0]), str(x[1])) for x in dependency_list]
+		dependency_list = []
+		for dependency in query_results:
+			dependency_list.append((str(dependency[0]), str(dependency[1])))
+			edges_in_network[str(dependency[0])+str(dependency[1])] = dependency[2]	
+
 		print(dependency_list)
 		
 		# Query for the nodes of the target_id
-		print("ads")
 		query = "SELECT * FROM org_chart_branches WHERE branch_id IN (" + ','.join(str(x[1]) for x in dependency_list) + ")"
-		print(query)
 		cursor.execute(query)
-		print('1')
 		query_results = cursor.fetchall()
   
 		query = "SELECT * FROM parent_branches WHERE current_branch_id IN (" + ','.join(str(x[1]) for x in dependency_list) + ")"
 		cursor.execute(query)	
-		print(query)
-		print('2')
 		parent_results_list = cursor.fetchall() 
 
 		global nodes_in_network
 		global node_data
-		global edges_in_network
 		for x in query_results:
 			if str(x[0]) not in nodes_in_network and (str(x[0]), str(x[1])) not in edges_in_network:
 				new_node_dependencies.append((str(x[0]), str(x[2])))
@@ -324,7 +358,6 @@ def retreiveTappedNodeInfo(data, elements):
   
 		# Query for the information of the children node of the tapped node
 		query = "SELECT * FROM org_chart_branches WHERE branch_id IN (" + ','.join(str(x) for x in children_list) + ")"
-		print(query)
 		cursor.execute(query)
 		query_results = cursor.fetchall()
   
@@ -342,9 +375,9 @@ def retreiveTappedNodeInfo(data, elements):
     
 	print(new_node_dependencies)
 	print("============================================================================================")
-	print(dependency_list)
+	print(query_results)
  
-	if not new_node_dependencies and not dependency_list:
+	if not new_node_dependencies and not query_results:
 		print("old elements")
 		return elements
    
@@ -359,7 +392,7 @@ def retreiveTappedNodeInfo(data, elements):
 
 	edges = [
 	{
-		'data': {'source': source, 'target': target}
+		'data': {'id':source+target, 'source': target, 'target': source}
 	}
 		for source, target in (
 			dependency_list
