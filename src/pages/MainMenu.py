@@ -148,7 +148,7 @@ layout = html.Div(className='MainMenu',
 	children=[
 			html.Div(className='MainMenuTitle', children=
 				[
-					html.H1('Bayer 3D Network', className='mainMenuHeader', style={'color': 'white'}),
+					html.H1('Bayer\'s 3D Network', className='mainMenuHeader', style={'color': 'white'}),
 				]
 			),
 			html.Div(className='mainMenuBody', children=
