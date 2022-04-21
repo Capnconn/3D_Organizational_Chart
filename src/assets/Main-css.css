@@ -6,6 +6,11 @@ body {
 	text-align: center;
 }
 
+.dash-dropdown {
+    width: 50%;
+    margin: auto;
+}
+
 .inputBox {
 	margin-top: 50px;
 	margin: -10px;
