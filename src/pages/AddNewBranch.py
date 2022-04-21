@@ -147,8 +147,9 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 		print(level)
 		print('Division')
 		print(level=='Division')
+		print(parent)
 
-		if level != 'Division':
+		if level != 'Division' and parent is not None:
 			cursor.execute(select_node_id, (branch,))
 
 			current_match = cursor.fetchone()
@@ -177,7 +178,79 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 				bayerdb.commit()
 				
 		else:
-			return html.P('*Divisions do not have parents', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '350px'})
+		
+			if children is not None:
+				cursor.execute(select_node_id, (branch,))
+
+				current_match = cursor.fetchone()
+		
+				for x in range(len(children)):
+					cursor.execute(select_node_id, (children[x],))
+
+					next_child_match = cursor.fetchone()
+	
+					if current_match is not None:
+
+						current_match_id = int(''.join(map(str, current_match)))
+
+						next_child_id = int(''.join(map(str, next_child_match)))
+
+						cursor.execute(
+							"""INSERT INTO child_branches 
+							(current_branch_id, child_branch_id) 
+							VALUES(%s, %s)""", (current_match_id, next_child_id))
+				
+						bayerdb.commit()
+					
+						cursor.execute(
+							"""INSERT INTO parent_branches 
+							(current_branch_id, parent_branch_id) 
+							VALUES(%s, %s)""", (next_child_id, current_match_id))
+				
+						bayerdb.commit()
+					
+					
+					
+			if edges is not None:
+				
+				edge_descriptions = []
+		
+				edge_descriptions.append(edgeDescriptions.split(", "))
+			
+		
+				cursor.execute(select_node_id, (branch,))
+
+				current_match = cursor.fetchone()
+		
+				for x in range(len(edges)):
+			
+					
+					cursor.execute(select_node_id, (edges[x],))
+
+					next_edge_match = cursor.fetchone()
+
+					if current_match is not None:
+
+						current_match_id = int(''.join(map(str, current_match)))
+
+						next_edge_id = int(''.join(map(str, next_edge_match)))
+
+						cursor.execute(
+							"""INSERT INTO edges
+							(source_id, target_id, edge_description) 
+							VALUES(%s, %s, %s)""", (current_match_id, next_edge_id, edge_descriptions[0][x]))	
+				
+						bayerdb.commit()
+				
+						cursor.execute(
+							"""INSERT INTO edges
+							(source_id, target_id, edge_description) 
+							VALUES(%s, %s, %s)""", (next_edge_id, current_match_id, edge_descriptions[0][x]))	
+				
+						bayerdb.commit()
+			return html.P('*Divisions do not have parents. ' + branch + ' was created without a parent.' , id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '350px'})
+			
+		
 		
 		if children is not None:
 			cursor.execute(select_node_id, (branch,))
