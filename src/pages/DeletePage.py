@@ -41,7 +41,7 @@ def populate_dropdown_menus():
 layout = html.Div(className='DeletePageLayout',
     children=[
         html.H1("Delete a branch from the network", className="deleteNodeLabel", style={'color':'white'}),
-		html.P("Enter a title for Branch 1 to delete that organizational branch and all of its' connections from Bayer network. Enter titles for two branches to delete the connection between those two branches.", id="instructions", className="instructions"),
+		html.P("Select a title for the first branch to delete that organizational branch and all of its' connections from Bayer's network. Select titles for two branches to delete the connection between those two branches.", id="instructions", className="instructions", style={'color':'white'}),
 		html.Br(),
         html.Div(className="deleteNode1Body",
             children=[
@@ -69,7 +69,7 @@ layout = html.Div(className='DeletePageLayout',
         html.Div(id="hidden_div_for_redirect_callback_return_home")
     ]
 )
-
+#Update the dropdown menu options each time the page is loaded
 @callback(
     Output('node1Title', 'options'),
     Output('node2Title', 'options'),
