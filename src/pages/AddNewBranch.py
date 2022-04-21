@@ -197,9 +197,8 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 			current_match = cursor.fetchone()
 		
 			for x in range(len(edges)):
-				for y in range(len(edge_descriptions[x])):
 			
-					print(edge_descriptions[x][y])
+					print(edge_descriptions[0][x])
 					cursor.execute(select_node_id, (edges[x],))
 
 					next_edge_match = cursor.fetchone()
@@ -213,14 +212,14 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 						cursor.execute(
 							"""INSERT INTO edges
 							(source_id, target_id, edge_description) 
-							VALUES(%s, %s, %s)""", (current_match_id, next_edge_id, edge_descriptions[x][y]))	
+							VALUES(%s, %s, %s)""", (current_match_id, next_edge_id, edge_descriptions[0][x]))	
 				
 						bayerdb.commit()
 				
 						cursor.execute(
 							"""INSERT INTO edges
 							(source_id, target_id, edge_description) 
-							VALUES(%s, %s, %s)""", (next_edge_id, current_match_id, edge_descriptions[x][y]))	
+							VALUES(%s, %s, %s)""", (next_edge_id, current_match_id, edge_descriptions[0][x]))	
 				
 						bayerdb.commit()
 				
