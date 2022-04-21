@@ -108,8 +108,8 @@ layout = html.Div(className='AddNewBranchMain',
 )
 def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescriptions, parent, children):
 	
-	if not level or not branch or not num or not descriptions or not parent:
-		return html.P('* Only child, edge, and edge description can be empty', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
+	if not level or not branch or not num or not descriptions:
+		return html.P('* A branch must have a level, title, number of employees', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '300px'})
 	else:
 		cursor.execute(
 				"""INSERT INTO org_chart_branches 
@@ -120,25 +120,35 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 		
 		select_node_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
 
-		cursor.execute(select_node_id, (branch,))
+		if level != 'Division':
+			cursor.execute(select_node_id, (branch,))
 
-		current_match = cursor.fetchone()
+			current_match = cursor.fetchone()
 
-		cursor.execute(select_node_id, (parent,))
+			cursor.execute(select_node_id, (parent,))
 		
-		parent_match = cursor.fetchone()
+			parent_match = cursor.fetchone()
 	
-		if current_match is not None and parent_match is not None:
+			if current_match is not None and parent_match is not None:
 
-			current_id = int(''.join(map(str, current_match)))
-			parent_id = int(''.join(map(str, parent_match)))
+				current_id = int(''.join(map(str, current_match)))
+				parent_id = int(''.join(map(str, parent_match)))
 		
-			cursor.execute(
-				"""INSERT INTO parent_branches 
-				(current_branch_id, parent_branch_id) 
-				VALUES(%s, %s)""", (current_id, parent_id))	
+				cursor.execute(
+					"""INSERT INTO parent_branches 
+					(current_branch_id, parent_branch_id) 
+					VALUES(%s, %s)""", (current_id, parent_id))
 				
-			bayerdb.commit()
+				bayerdb.commit()
+				
+				cursor.execute(
+					"""INSERT INTO child_branches 
+					(current_branch_id, child_branch_id) 
+					VALUES(%s, %s)""", (parent_id, current_id))
+					
+				bayerdb.commit()
+				
+				
 		
 		if children is not None:
 			cursor.execute(select_node_id, (branch,))
@@ -159,9 +169,18 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 					cursor.execute(
 						"""INSERT INTO child_branches 
 						(current_branch_id, child_branch_id) 
-						VALUES(%s, %s)""", (current_match_id, next_child_id))	
+						VALUES(%s, %s)""", (current_match_id, next_child_id))
 				
 					bayerdb.commit()
+					
+					cursor.execute(
+						"""INSERT INTO parent_branches 
+						(current_branch_id, parent_branch_id) 
+						VALUES(%s, %s)""", (next_child_id, current_match_id))
+				
+					bayerdb.commit()
+					
+					
 					
 		if edges is not None:
 				
