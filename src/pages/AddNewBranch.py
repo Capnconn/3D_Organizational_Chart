@@ -149,7 +149,7 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 		print(level=='Division')
 		print(parent)
 
-		if level != 'Division' and parent is not None:
+		if level != 'Division':
 			cursor.execute(select_node_id, (branch,))
 
 			current_match = cursor.fetchone()
@@ -177,7 +177,7 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 					
 				bayerdb.commit()
 				
-		else:
+		elif level == 'Division' and parent is not None:
 		
 			if children is not None:
 				cursor.execute(select_node_id, (branch,))
