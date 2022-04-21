@@ -108,7 +108,6 @@ def initialzeNetworkLayered():
 
 	global initial_elements
 	initial_elements = elements
-	print(elements)
 
 	return (cyto.Cytoscape(
 				userZoomingEnabled=False,
@@ -230,8 +229,6 @@ layout = html.Div(className='MainMenu',
 )
 def displayEdgeData(data1, data2):
 	hoveredNode = data1['id']
-	print(data1)
-	print(edges_in_network)
 	return edges_in_network[hoveredNode]
 
 @callback(
@@ -307,10 +304,8 @@ def retreiveTappedNodeInfo(data, elements):
 	cursor.execute(query)
 	query_results = cursor.fetchall()
  
-	print(query_results)
  
 	if not children_list and not query_results:
-		print("returning no")
 		return elements
 
 	new_node_dependencies = []
@@ -327,7 +322,6 @@ def retreiveTappedNodeInfo(data, elements):
 			dependency_list.append((str(dependency[0]), str(dependency[1])))
 			edges_in_network[str(dependency[0])+str(dependency[1])] = dependency[2]	
 
-		print(dependency_list)
 		
 		# Query for the nodes of the target_id
 		query = "SELECT * FROM org_chart_branches WHERE branch_id IN (" + ','.join(str(x[1]) for x in dependency_list) + ")"
@@ -374,13 +368,8 @@ def retreiveTappedNodeInfo(data, elements):
 				node_data[str(x[0])]["description"] = str(x[4])
 				node_data[str(x[0])]["parent"] = branch_name
 				nodes_in_network.append(str(x[0]))
-    
-	print(new_node_dependencies)
-	print("============================================================================================")
-	print(query_results)
  
 	if not new_node_dependencies and not query_results:
-		print("old elements")
 		return elements
    
 	nodes = [
@@ -406,10 +395,8 @@ def retreiveTappedNodeInfo(data, elements):
 	
 	updated_elements = new_elements + elements
 	if updated_elements == elements:
-		print('same')
 		return elements
 	else:
-		print("not the same")
 		return updated_elements    
 
 	# # If no children, return
@@ -647,9 +634,7 @@ def createNetwork():
 		node_edge[node[2]] = node[1]
 		display_data.append(node[1] + ":\nLevel: " + node[0] + "\nNumber of employees: " +  str(node[3]) + "\nDescription: " + node[4])
   
-	print(node_edge)
 
-	print(node_id)
 	N = len(node_list)
 	# print(labels)
 	# print(N)
@@ -783,7 +768,9 @@ def createNetwork():
 	global figure
 	fig=go.Figure(data=data, layout=layout)
 
-	return (dcc.Graph(id='3D_network_id', figure=fig, style={'width': '100%', 'height': '550px'}),
+	return (dcc.Graph(id='3D_network_id', figure=fig, style={'width': '100%', 'height': '550px'}, config={
+        'modeBarButtonsToRemove': ['pan2d', 'lasso2d']
+    }),
          html.P(id='3D_network_output'))
 
 	# fig.write_html("network.html")
@@ -795,12 +782,13 @@ def createNetwork():
 @callback(
 	Output('3D_network_output', 'children'),
 	Input('3D_network_id', 'clickData'),
+	State('3D_network_output', 'children'),
 	prevent_initial_call=True
 )
-def handle_3D_Click_Data(data):
+def handle_3D_Click_Data(data, value):
+	if data['points'][0]['curveNumber'] != 1:
+		return value
 	current_node = data['points'][0]['text']
-	print(data['points'][0]['text'])
-	print(overview_network_node_data[current_node])
 	node_dict = overview_network_node_data[current_node]
 	return [current_node, "Level: ", node_dict['level'], html.Br(), "Number of employees: ", node_dict['num_employees'], html.Br(), "Description: ", node_dict['description']]
 
