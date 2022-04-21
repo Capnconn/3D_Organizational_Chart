@@ -1,4 +1,5 @@
 from platform import node
+from xml.etree.ElementTree import TreeBuilder
 from dash import Dash, dcc, html, Input, Output, callback, State, callback_context
 import dash_cytoscape as cyto
 import dash_daq as daq
@@ -26,6 +27,7 @@ initial_elements = []
 node_data = {}
 nodes_in_network = []
 edges_in_network = {}
+overview_network_node_data = {}
 
 
 #############################################################################################
@@ -112,7 +114,7 @@ def initialzeNetworkLayered():
 				userZoomingEnabled=False,
 				id='cytoscape-callbacks-1',
 				elements=elements,
-				style={'width': '100%', 'height': '400px'},
+				style={'width': '100%', 'height': '500px'},
 				layout={
 					'name': 'random', 'animate': True, 'animationDuration': 2000
 				},
@@ -611,14 +613,17 @@ def handleEditPage(n_clicks):
 
 
 def createNetwork():
-	query = "SELECT branch_level, branch_title, branch_id FROM org_chart_branches"
+	query = "SELECT branch_level, branch_title, branch_id, num_of_employees, branch_description FROM org_chart_branches"
 	cursor.execute(query)
 	node_list = cursor.fetchall()
 	level = []
 	node_id = []
 	labels = []
 	node_edge = {}
+	num_employees = []
 	highest_num = 0
+	display_data = []
+	global overview_network_node_data
 	for node in node_list:
 
 		if "Division" in node[0]:
@@ -629,15 +634,18 @@ def createNetwork():
 			level.append(3)
 		elif "Community" in node[0]:
 			level.append(4)
-
+		overview_network_node_data[str(node[1])] = {}
+		overview_network_node_data[str(node[1])]["level"] = node[0]
+		overview_network_node_data[str(node[1])]["description"] = node[4]
+		overview_network_node_data[str(node[1])]["num_employees"] = node[3]
+		
 		labels.append(node[1])
 		if int(node[2]) > highest_num:
 			highest_num = int(node[2])
 
 		node_id.append(node[2])
 		node_edge[node[2]] = node[1]
-		# or
-		# labels.append(node[0])
+		display_data.append(node[1] + ":\nLevel: " + node[0] + "\nNumber of employees: " +  str(node[3]) + "\nDescription: " + node[4])
   
 	print(node_edge)
 
@@ -679,7 +687,7 @@ def createNetwork():
 	edges = [(int(x[0]), int(x[1])) for x in edges]
 
 	
-	G = ig.Graph(edges, directed=False)
+	G = ig.Graph(edges, directed=True)
 
 	layt = G.layout('kk', dim=3)
 
@@ -698,7 +706,6 @@ def createNetwork():
 		Yn += [layt[x][1]]
 		Zn += [layt[x][2]]
 		if x in node_id:
-			print(x)
 			newXn.append(Xn[x])
 			newYn.append(Yn[x])
 			newZn.append(Zn[x])
@@ -740,7 +747,8 @@ def createNetwork():
 		name='actors',
 		marker=dict(symbol='circle', size=6, color=level, colorscale='Viridis', line=dict(color='rgb(00,00,00)', width=0.5)),
 		text=labels,
-		hoverinfo='text'
+		hoverinfo='text',
+		textposition="bottom center"
 	)
 
 	trace3=go.Scatter3d(
@@ -762,8 +770,6 @@ def createNetwork():
 		title=''
 	)
 	layout = go.Layout(
-		width=1000,
-		height=1000,
 		showlegend=False,
 		scene=dict(
 			xaxis=dict(axis),
@@ -776,15 +782,27 @@ def createNetwork():
 
 	global figure
 	fig=go.Figure(data=data, layout=layout)
-	print(fig)
 
-	return dcc.Graph(figure=fig)
+	return (dcc.Graph(id='3D_network_id', figure=fig, style={'width': '100%', 'height': '550px'}),
+         html.P(id='3D_network_output'))
 
 	# fig.write_html("network.html")
 
 	# fig.show()
 	# py.iplot(fig, filename='Les-Miserables')
 	# iplot(fig, filename='Les-Miserables')
+ 
+@callback(
+	Output('3D_network_output', 'children'),
+	Input('3D_network_id', 'clickData'),
+	prevent_initial_call=True
+)
+def handle_3D_Click_Data(data):
+	current_node = data['points'][0]['text']
+	print(data['points'][0]['text'])
+	print(overview_network_node_data[current_node])
+	node_dict = overview_network_node_data[current_node]
+	return [current_node, "Level: ", node_dict['level'], html.Br(), "Number of employees: ", node_dict['num_employees'], html.Br(), "Description: ", node_dict['description']]
 
 
 
