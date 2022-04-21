@@ -143,6 +143,10 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 		bayerdb.commit()
 		
 		select_node_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
+		
+		print(level)
+		print('Division')
+		print(level=='Division')
 
 		if level != 'Division':
 			cursor.execute(select_node_id, (branch,))
@@ -172,8 +176,8 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 					
 				bayerdb.commit()
 				
-			else:
-				return html.P('*Divisions do not have parents', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '350px'})
+		else:
+			return html.P('*Divisions do not have parents', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '350px'})
 		
 		if children is not None:
 			cursor.execute(select_node_id, (branch,))
