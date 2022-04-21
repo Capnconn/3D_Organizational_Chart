@@ -140,72 +140,71 @@ def handleAddBranch(n_clicks, level, branch, num, descriptions, edges, edgeDescr
 				
 			bayerdb.commit()
 		
-		cursor.execute(select_node_id, (branch,))
+		if children is not None:
+			cursor.execute(select_node_id, (branch,))
 
-		current_match = cursor.fetchone()
-			
-		cursor.execute(select_node_id, (children,))
-
-		next_child_match = cursor.fetchone()
-	
-		if current_match is not None:
-
-			current_match_id = int(''.join(map(str, current_match)))
-
-			while next_child_match is not None:
+			current_match = cursor.fetchone()
 		
-				next_child_id = int(''.join(map(str, next_child_match)))
+			for x in range(len(children)):
+				cursor.execute(select_node_id, (children[x],))
 
-				cursor.execute(
-					"""INSERT INTO child_branches 
-					(current_branch_id, child_branch_id) 
-					VALUES(%s, %s)""", (current_match_id, next_child_id))	
-				
-				bayerdb.commit()
-				
 				next_child_match = cursor.fetchone()
+	
+				if current_match is not None:
+
+					current_match_id = int(''.join(map(str, current_match)))
+
+					next_child_id = int(''.join(map(str, next_child_match)))
+
+					cursor.execute(
+						"""INSERT INTO child_branches 
+						(current_branch_id, child_branch_id) 
+						VALUES(%s, %s)""", (current_match_id, next_child_id))	
 				
-		edge_descriptions = []
+					bayerdb.commit()
+					
+		if edges is not None:
+				
+			edge_descriptions = []
 		
-		edge_descriptions.append(edgeDescriptions.split(", "))
+			edge_descriptions.append(edgeDescriptions.split(", "))
+			
+			print(edge_descriptions)
+			print(edgeDescriptions)
+			
 		
-		cursor.execute(select_node_id, (branch,))
+			cursor.execute(select_node_id, (branch,))
 
-		current_match = cursor.fetchone()
+			current_match = cursor.fetchone()
+		
+			for x in range(len(edges)):
+				for y in range(len(edge_descriptions[x])):
+			
+					print(edge_descriptions[x][y])
+					cursor.execute(select_node_id, (edges[x],))
 
-		cursor.execute(select_node_id, (edges,))
+					next_edge_match = cursor.fetchone()
 
-		next_edge_match = cursor.fetchone()
+					if current_match is not None:
 
-		if current_match is not None:
+						current_match_id = int(''.join(map(str, current_match)))
 
-			i = 0
+						next_edge_id = int(''.join(map(str, next_edge_match)))
 
-			current_match_id = int(''.join(map(str, current_match)))
-
-			while next_edge_match is not None:
-
-				next_edge_id = int(''.join(map(str, next_edge_match)))
-
-				cursor.execute(
-					"""INSERT INTO edges
-					(source_id, target_branch_id, edge_description) 
-					VALUES(%s, %s, %s)""", (current_match_id, next_edge_id, edge_descriptions[i]))	
+						cursor.execute(
+							"""INSERT INTO edges
+							(source_id, target_id, edge_description) 
+							VALUES(%s, %s, %s)""", (current_match_id, next_edge_id, edge_descriptions[x][y]))	
 				
-				bayerdb.commit()
+						bayerdb.commit()
 				
-				cursor.execute(
-					"""INSERT INTO edges
-					(source_id, target_branch_id, edge_description) 
-					VALUES(%s, %s, %s)""", (next_edge_id, current_match_id, edge_descriptions[i]))	
+						cursor.execute(
+							"""INSERT INTO edges
+							(source_id, target_id, edge_description) 
+							VALUES(%s, %s, %s)""", (next_edge_id, current_match_id, edge_descriptions[x][y]))	
 				
-				bayerdb.commit()
+						bayerdb.commit()
 				
-				i+=1
-				
-				next_edge_match = cursor.fetchone()
-
-
 		return html.P(level + ' ' + branch + ' ' + str(num) + ' ' + descriptions + ' * Branch was added successfully', id='tempP', style={'color': 'white', 'position': 'relative', 'bottom': '80px'})
 
 @callback(
