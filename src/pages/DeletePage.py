@@ -40,13 +40,13 @@ def populate_dropdown_menus():
 #Create a webpage with two dropdowns, a "Home" button and a "delete" button
 layout = html.Div(className='DeletePageLayout',
     children=[
-        html.H1("Delete a branch from the network", className="deleteNodeLabel", style={'color':'white'}),
-		html.P("Select a title for the first branch to delete that organizational branch and all of its' connections from Bayer's network. Select titles for two branches to delete the connection between those two branches.", id="instructions", className="instructions", style={'color':'white'}),
+        html.H1("Delete a team from the network", className="deleteNodeLabel", style={'color':'white'}),
+		html.P("Select a title for the first team to delete that organizational team and all of its' connections from Bayer's network. Select titles for two teams to delete the connection between those two teams.", id="instructions", className="instructions", style={'color':'white'}),
 		html.Br(),
         html.Div(className="deleteNode1Body",
             children=[
                 #html.P("Branch 1: ", id="Node1", className="node1Label"),
-                dcc.Dropdown(id="node1Title", options=dropdown_options, placeholder='Select first branch'),
+                dcc.Dropdown(id="node1Title", options=dropdown_options, placeholder='Select first team'),
                 html.P(id='spacing'),
             ],
         ),
@@ -54,7 +54,7 @@ layout = html.Div(className='DeletePageLayout',
         html.Div(className="deleteNode2Body",
             children=[
                 #html.P("Branch 2: ", id="Node2", className="node2Label"),
-                dcc.Dropdown(id="node2Title", options=dropdown_options, placeholder='Select second branch'),
+                dcc.Dropdown(id="node2Title", options=dropdown_options, placeholder='Select second team'),
                 html.P(id='spacing'),
                 
             ],
@@ -107,7 +107,7 @@ def handleDeleteBranch(n_clicks, node1, node2):
         
 
     if not node1:
-        return html.P('*Please enter a value for Branch 1', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
+        return html.P('*Please enter a value for the first team', id='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
     elif node1 and not node2:
         select_node1_id = "SELECT branch_id FROM org_chart_branches WHERE branch_title = %s"
     
@@ -143,11 +143,11 @@ def handleDeleteBranch(n_clicks, node1, node2):
             
             bayerdb.commit()
             
-            return html.P('*Branch 1 was deleted successfully', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
+            return html.P('*' + node1 + ' was deleted successfully', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
         
         else:
         
-            return html.P('That title for Branch 1 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
+            return html.P(node1 + ' was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
         
         
     elif node1 and node2:
@@ -177,19 +177,19 @@ def handleDeleteBranch(n_clicks, node1, node2):
 
             bayerdb.commit()
 
-            return html.P('*Connection between Branch 1 and Branch 2 deleted.', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
+            return html.P('*Connection between ' + node1 + ' and ' + node2 + ' deleted.', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
 
         elif node1_match is None:
 
             
 
-            return html.P('That title for Branch 1 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
+            return html.P('That title for ' + node1 + ' was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
 
         elif node2_match is None:
 
           
 
-            return html.P('That title for Branch 2 was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
+            return html.P('That title for ' + node2 + ' was not found in the database.', id ='tempP', style={'color': '#cc0000', 'position': 'relative', 'bottom': '20px'})
 
         else:
             
@@ -198,7 +198,7 @@ def handleDeleteBranch(n_clicks, node1, node2):
 
     else:
 
-        return html.P('*Branch 2 cannot be the only entry', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
+        return html.P('*' + node2 + 'cannot be the only entry', id='tempP', style={'color': '#49af41', 'position': 'relative', 'bottom': '20px'})
 
 #When the "Home" button is clicked, return to Main Menu
 @callback(

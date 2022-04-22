@@ -29,7 +29,7 @@ layout = html.Div(className='EditBranchMain',
 	children=[
       html.Div(className='AddBranchBody', 
 			children=[
-				html.H1('Edit a Branch'),
+				html.H1('Edit a Team'),
 				
 				dcc.Dropdown(id="branch", options=branch_titles, placeholder="Select a branch to edit", multi=True),
 				html.Br(),

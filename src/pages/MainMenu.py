@@ -165,21 +165,21 @@ layout = html.Div(className='MainMenu',
 						[
 							dbc.Col(
 								dbc.Collapse(
-									dbc.Card(html.Button('Add branch', id='addBranchButton', className='addBranchMenuCss')),
+									dbc.Card(html.Button('Add Team', id='addBranchButton', className='addBranchMenuCss')),
 									id='addButton',
 									is_open=False
 								)
 							),
 							dbc.Col(
 								dbc.Collapse(
-									dbc.Card(html.Button('Delete branch', id='deleteBranchButton', className='deleteBranchMenuCss')),
+									dbc.Card(html.Button('Delete Team', id='deleteBranchButton', className='deleteBranchMenuCss')),
 									id='deleteButton',
 									is_open=False
 								)
 							),
 							dbc.Col(
 								dbc.Collapse(
-									dbc.Card(html.Button('Edit branch', id='editBranchButton', className='editBranchMenuCss')),
+									dbc.Card(html.Button('Edit Team', id='editBranchButton', className='editBranchMenuCss')),
 									id='editButton',
 									is_open=False
 								)
@@ -790,7 +790,7 @@ def handle_3D_Click_Data(data, value):
 		return value
 	current_node = data['points'][0]['text']
 	node_dict = overview_network_node_data[current_node]
-	return [current_node, "Level: ", node_dict['level'], html.Br(), "Number of employees: ", node_dict['num_employees'], html.Br(), "Description: ", node_dict['description']]
+	return [current_node, html.Br(), "Level: ", node_dict['level'], html.Br(), "Number of employees: ", node_dict['num_employees'], html.Br(), "Description: ", node_dict['description']]
 
 
 

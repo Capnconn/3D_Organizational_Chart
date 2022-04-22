@@ -51,31 +51,31 @@ def populate_dropdown_menus():
 
 layout = html.Div(className='AddNewBranchMain', 
 	children=[
-		html.H1('Add New Branch', style={'color':'white'}),
+		html.H1('Add New Team', style={'color':'white'}),
 
 		html.Div(className='AddLevel', 
 			children=[
 				#html.P("Branch 1: ", id="Node1", className="node1Label"),
                 dcc.Dropdown(id="branchLevel", options=branch_levels, placeholder="Select the level of the Branch"),
                 html.P(id='spacing'),
-				dcc.Input(id='branchName', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a Branch Name"),
+				dcc.Input(id='branchName', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a Team Name"),
 				html.Br(),
 				html.Br(),
 				dcc.Input(id='numEmployees', type='number', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter Number of Employees"),
 				html.Br(),
 				html.Br(),
-				dcc.Input(id='branchDescription', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a Branch Description"),
+				dcc.Input(id='branchDescription', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a Team Description"),
 				html.Br(),
 				html.Br(),
 			#style={'paddingTop': '90px'}
-				dcc.Dropdown(id="branchEdges", options=dropdown_options, placeholder="Select some dependencies for the new branch", multi=True),
+				dcc.Dropdown(id="branchEdges", options=dropdown_options, placeholder="Select some dependencies for the new team", multi=True),
 				html.Br(),
-				dcc.Input(id='edgeDescriptions', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a description for the dependency. Separate multiple descriptions with commas"),
+				dcc.Input(id='edgeDescriptions', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a description for each dependency. Separate multiple descriptions with commas"),
 				html.Br(),
 				html.Br(),
-				dcc.Dropdown(id="branchParent", options=dropdown_options, placeholder="Select a parent for the new branch"),
+				dcc.Dropdown(id="branchParent", options=dropdown_options, placeholder="Select a parent for the new team"),
 				html.Br(),
-				dcc.Dropdown(id="branchChildren", options=dropdown_options, placeholder="Select some children for the new branch", multi=True)
+				dcc.Dropdown(id="branchChildren", options=dropdown_options, placeholder="Select some children for the new team", multi=True)
 			],
 		),
 
