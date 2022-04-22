@@ -672,7 +672,7 @@ def createNetwork():
 	edges = [(int(x[0]), int(x[1])) for x in edges]
 
 	
-	G = ig.Graph(edges, directed=True)
+	G = ig.Graph(highest_num+1, edges, directed=True)
 
 	layt = G.layout('kk', dim=3)
 
