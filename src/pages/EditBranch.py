@@ -31,15 +31,19 @@ layout = html.Div(className='EditBranchMain',
 			children=[
 				html.H1('Edit a Team'),
 				
-				dcc.Dropdown(id="branch", options=branch_titles, placeholder="Select a branch to edit", multi=True),
+				dcc.Dropdown(id="branch", options=branch_titles, placeholder="Select a Team to edit", multi=True),
 				html.Br(),
-				dcc.Input(id='branchName', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a Branch Name"),
+				dcc.Input(id='branchName', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a Team Name"),
 				html.Br(),
 				
+				html.Br(),
+				dcc.Input(id='description', type='text', style={'marginTop': '50px', 'margin': '-10px', 'width': '50%', 'borderRadius': '7px', 'border': '1px solid grey', 'height': '35px'}, placeholder="Enter a description"),
+				html.Br(),
+				html.Br(),
 				html.Button('Edit', id='editBranchButton', className='addBranchCss'),
 				html.Button('Home', id='homeButton', className='homeButtonCss', style={'position': 'relative'}),
 				
-
+				html.Br(),
                 html.Br(),
 				html.Img(className='bayerButton', src="/assets/img/bayer.png" , style={'height':'10%', 'width':'10%', 'left': '20px'}),
 			],
@@ -56,13 +60,20 @@ layout = html.Div(className='EditBranchMain',
 	Input('editBranchButton', 'n_clicks'),
 	State('branch', 'value'),
 	State('branchName', 'value'),
+	State('description', 'value'),
 	prevent_initial_call=True
 )
-def handleEdit(n_clicks, branch, branchName):
-	if not branch or not branchName:
+def handleEdit(n_clicks, branch, branchName, description):
+	if not branch and not branchName and not description:
 		return html.P(("Empty Fields"), id="tempPEdit")
 
-	else:
+	#No Branch selected
+	elif not branch and description is not None and branchName is not None:
+		
+		return html.P(("Please select a branch"), id="tempPEdit")
+
+	#For just Branch and Name
+	elif branch is not None and branchName is not None and not description:
 		str1 = str(''.join(branch))
 		cursor.execute(
 				"""UPDATE org_chart_branches 
@@ -71,6 +82,36 @@ def handleEdit(n_clicks, branch, branchName):
 				
 		bayerdb.commit()
 		return html.P(("For branch: " + str(branch)+ " - change: " + branchName), id="tempPEdit")
+
+	#for branch and description
+	elif branch is not None and description is not None and not branchName:
+		str1 = str(''.join(branch))
+		cursor.execute(
+				"""UPDATE edges 
+				SET edge_description=%s
+				WHERE edge_description=%s""", (description, str1))
+				
+		bayerdb.commit()
+		return html.P(("For branch: " + str(branch)+ " - change: " + description), id="tempPEdit")
+	
+	#for all fields
+	else:
+		str1 = str(''.join(branch))
+		cursor.execute(
+				"""UPDATE org_chart_branches 
+				SET branch_title=%s
+				WHERE branch_title=%s""", (branchName, str1))
+				
+		bayerdb.commit()
+
+		cursor.execute(
+				"""UPDATE edges 
+				SET edge_description=%s
+				WHERE edge_description=%s""", (description, str1))
+				
+		bayerdb.commit()
+		return html.P(("For branch: " + str(branch)+ " - New Name: " + branchName + " - New Description: " + description), id="tempPEdit")
+
 
 
 @callback(
